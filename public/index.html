@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>serguz.dev - Desarrollo Angular Profesional</title>
+    <meta name="description" content="Desarrollo de software boutique especializado en Angular. Arquitectura escalable para tu negocio."/>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ffffff", 
+                        "primary-dark": "#e5e5e5",
+                        "accent": "#333333",
+                        "background-light": "#ffffff",
+                        "background-dark": "#050505",
+                        "glass": "rgba(255, 255, 255, 0.05)",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"],
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                    },
+                    animation: {
+                        'subtle-pulse': 'pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #666;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        .video-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            object-fit: cover;
+            opacity: 0.4;
+        }
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Menu mobile */
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+
+        /* Calendario personalizado */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+        .time-slot:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
+        }
+        .time-slot.selected {
+            background: white !important;
+            color: black !important;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+    </style>
+</head>
+<body class="bg-background-dark text-white font-display antialiased overflow-x-hidden selection:bg-white selection:text-black">
+    <!-- Navigation -->
+    <nav class="fixed top-0 z-50 w-full border-b border-white/10 bg-black/80 backdrop-blur-xl transition-all duration-300">
+        <div class="flex items-center justify-between px-4 md:px-6 py-4 max-w-[1400px] mx-auto">
+            <div class="flex items-center gap-3 group cursor-pointer">
+                <div class="size-8 text-white border border-white rounded flex items-center justify-center bg-white/5 group-hover:bg-white group-hover:text-black transition-colors duration-300">
+                    <span class="material-symbols-outlined text-xl">terminal</span>
+                </div>
+                <h2 class="text-lg md:text-xl font-bold tracking-tighter relative">
+                    serguz.dev
+                    <span class="absolute -bottom-1 left-0 w-0 h-[1px] bg-white group-hover:w-full transition-all duration-300"></span>
+                </h2>
+            </div>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center gap-10">
+                <a class="text-xs uppercase tracking-widest text-gray-400 hover:text-white transition-colors relative group" href="#proyectos">
+                    Proyectos
+                    <span class="absolute -bottom-1 left-0 w-0 h-[1px] bg-white group-hover:w-full transition-all duration-300"></span>
+                </a>
+                <a class="text-xs uppercase tracking-widest text-gray-400 hover:text-white transition-colors relative group" href="#tecnologia">
+                    Stack
+                    <span class="absolute -bottom-1 left-0 w-0 h-[1px] bg-white group-hover:w-full transition-all duration-300"></span>
+                </a>
+                <a class="text-xs uppercase tracking-widest text-gray-400 hover:text-white transition-colors relative group" href="#contacto">
+                    Contacto
+                    <span class="absolute -bottom-1 left-0 w-0 h-[1px] bg-white group-hover:w-full transition-all duration-300"></span>
+                </a>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <a class="hidden sm:flex group items-center gap-2 px-4 md:px-5 py-2 bg-white text-black text-xs font-bold uppercase tracking-wider hover:bg-gray-200 transition-all rounded-sm shadow-[0_0_15px_rgba(255,255,255,0.1)] hover:shadow-[0_0_20px_rgba(255,255,255,0.3)]" href="https://wa.me/51987315685" target="_blank">
+                    <span class="hidden md:inline">WhatsApp</span>
+                    <span class="md:hidden">Chat</span>
+                    <span class="material-symbols-outlined text-base group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300">arrow_outward</span>
+                </a>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden text-white" id="mobile-menu-btn">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu fixed top-0 right-0 h-full w-64 bg-black border-l border-white/10 p-6 md:hidden" id="mobile-menu">
+            <button class="absolute top-4 right-4 text-white" id="close-mobile-menu">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <div class="flex flex-col gap-6 mt-12">
+                <a class="text-sm uppercase tracking-widest text-gray-400 hover:text-white transition-colors" href="#proyectos">Proyectos</a>
+                <a class="text-sm uppercase tracking-widest text-gray-400 hover:text-white transition-colors" href="#tecnologia">Stack</a>
+                <a class="text-sm uppercase tracking-widest text-gray-400 hover:text-white transition-colors" href="#contacto">Contacto</a>
+                <a class="flex items-center gap-2 px-4 py-2 bg-white text-black text-xs font-bold uppercase tracking-wider hover:bg-gray-200 transition-all rounded-sm mt-4" href="https://wa.me/51987315685" target="_blank">
+                    <span>WhatsApp</span>
+                    <span class="material-symbols-outlined text-base">arrow_outward</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flex flex-col min-h-screen">
+        <!-- Hero Section -->
+        <div class="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden">
+            <div class="absolute inset-0 bg-black">
+                <video autoplay class="video-bg grayscale opacity-30" loop muted playsinline>
+                    <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-black-and-white-lines-pattern-3047-large.mp4" type="video/mp4"/>
+                </video>
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_#050505_90%)]"></div>
+                <div class="absolute inset-0 bg-black/20"></div>
+                <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_70%)] pointer-events-none"></div>
+            </div>
+            
+            <div class="relative z-10 max-w-[1200px] w-full px-4 md:px-6 flex flex-col items-center text-center">
+                <div class="mb-6 inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/20 bg-black/40 backdrop-blur-md animate-fade-in-up" style="animation-delay: 0.1s;">
+                    <span class="size-2 rounded-full bg-green-500 animate-pulse"></span>
+                    <span class="text-[10px] uppercase tracking-[0.2em] text-gray-300"><span class="lowercase">serguz.dev</span> — Disponible</span>
+                </div>
+                
+                <h1 class="text-4xl md:text-6xl lg:text-8xl xl:text-9xl font-bold tracking-tighter text-white mb-6 md:mb-8 mix-blend-difference animate-fade-in-up" style="animation-delay: 0.3s;">
+                    INNOVACIÓN <br/> 
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-400 to-gray-600 animate-text-shimmer">DIGITAL</span>
+                </h1>
+                
+                <p class="text-gray-400 text-base md:text-lg lg:text-xl max-w-2xl leading-relaxed font-light mb-8 md:mb-12 px-4 animate-fade-in-up" style="animation-delay: 0.5s;">
+                    Arquitectura de software de alto nivel y desarrollo Angular para marcas que exigen excelencia técnica
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 md:gap-6 w-full sm:w-auto justify-center px-4 animate-fade-in-up" style="animation-delay: 0.7s;">
+                    <a class="group relative flex items-center justify-center px-6 md:px-8 py-3 md:py-4 bg-white text-black font-bold uppercase tracking-widest overflow-hidden hover:bg-gray-200 transition-colors text-sm md:text-base" href="#proyectos">
+                        <span class="absolute inset-0 bg-black transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></span>
+                        <span class="relative z-10 group-hover:text-white transition-colors duration-300">Ver Portfolio</span>
+                    </a>
+                    <button class="group flex items-center justify-center px-6 md:px-8 py-3 md:py-4 border border-white text-white font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all relative overflow-hidden text-sm md:text-base" onclick="openBookingModal()">
+                        <span class="absolute inset-0 bg-white transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></span>
+                        <span class="relative z-10 group-hover:text-black">Agendar Cita</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-float opacity-50 cursor-pointer hover:opacity-100 transition-opacity">
+                <span class="text-[10px] uppercase tracking-widest">Scroll</span>
+                <span class="material-symbols-outlined animate-bounce">keyboard_arrow_down</span>
+            </div>
+        </div>
+
+        <!-- Tech Stack Section -->
+        <div class="py-16 md:py-24 px-4 md:px-6 bg-black border-t border-white/5" id="tecnologia">
+            <div class="max-w-[1400px] mx-auto">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-16 border-b border-white/10 pb-8">
+                    <div>
+                        <h3 class="text-xs font-bold uppercase tracking-[0.2em] text-gray-500 mb-2 flex items-center gap-2">
+                            <span class="w-2 h-2 bg-white rounded-full"></span>
+                            Nuestro Core
+                        </h3>
+                        <h2 class="text-2xl md:text-3xl lg:text-5xl font-bold text-white">Tecnología de Vanguardia</h2>
+                    </div>
+                    <div class="mt-6 md:mt-0 flex gap-2 md:gap-4 flex-wrap">
+                        <span class="px-3 md:px-4 py-1 md:py-2 border border-white/20 rounded-full text-[10px] md:text-xs font-mono text-gray-300 hover:border-white/50 hover:bg-white/5 transition-all cursor-default">Angular 17+</span>
+                        <span class="px-3 md:px-4 py-1 md:py-2 border border-white/20 rounded-full text-[10px] md:text-xs font-mono text-gray-300 hover:border-white/50 hover:bg-white/5 transition-all cursor-default">TypeScript</span>
+                        <span class="px-3 md:px-4 py-1 md:py-2 border border-white/20 rounded-full text-[10px] md:text-xs font-mono text-gray-300 hover:border-white/50 hover:bg-white/5 transition-all cursor-default">Node.js</span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-white/10 border border-white/10">
+                    <div class="bg-black p-6 md:p-8 group hover:bg-zinc-900 transition-all duration-500 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-white/10 transition-all duration-700"></div>
+                        <span class="material-symbols-outlined text-3xl md:text-4xl mb-4 md:mb-6 text-white font-thin group-hover:scale-110 transition-transform duration-300 block w-fit">architecture</span>
+                        <h3 class="text-lg md:text-xl font-bold mb-2 md:mb-3 text-white">Arquitectura Modular</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed group-hover:text-gray-300 transition-colors">Diseño escalable y mantenible basado en componentes desacoplados y micro-frontends.</p>
+                    </div>
+                    
+                    <div class="bg-black p-6 md:p-8 group hover:bg-zinc-900 transition-all duration-500 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-white/10 transition-all duration-700"></div>
+                        <span class="material-symbols-outlined text-3xl md:text-4xl mb-4 md:mb-6 text-white font-thin group-hover:scale-110 transition-transform duration-300 block w-fit">bolt</span>
+                        <h3 class="text-lg md:text-xl font-bold mb-2 md:mb-3 text-white">Alto Rendimiento</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed group-hover:text-gray-300 transition-colors">Optimización extrema de Core Web Vitals y estrategias de carga perezosa.</p>
+                    </div>
+                    
+                    <div class="bg-black p-6 md:p-8 group hover:bg-zinc-900 transition-all duration-500 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-white/10 transition-all duration-700"></div>
+                        <span class="material-symbols-outlined text-3xl md:text-4xl mb-4 md:mb-6 text-white font-thin group-hover:scale-110 transition-transform duration-300 block w-fit">security</span>
+                        <h3 class="text-lg md:text-xl font-bold mb-2 md:mb-3 text-white">Seguridad Robusta</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed group-hover:text-gray-300 transition-colors">Implementación de estándares OWASP y autenticación segura con JWT/OAuth2.</p>
+                    </div>
+                    
+                    <div class="bg-black p-6 md:p-8 group hover:bg-zinc-900 transition-all duration-500 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-white/10 transition-all duration-700"></div>
+                        <span class="material-symbols-outlined text-3xl md:text-4xl mb-4 md:mb-6 text-white font-thin group-hover:scale-110 transition-transform duration-300 block w-fit">api</span>
+                        <h3 class="text-lg md:text-xl font-bold mb-2 md:mb-3 text-white">Integración API</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed group-hover:text-gray-300 transition-colors">Conexiones fluidas con servicios RESTful y GraphQL para datos en tiempo real.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects Section -->
+        <div class="py-16 md:py-24 px-4 md:px-6 bg-background-dark relative" id="proyectos">
+            <div class="max-w-[1400px] mx-auto">
+                <div class="flex items-center gap-4 mb-12 md:mb-16">
+                    <span class="h-px w-8 md:w-12 bg-white"></span>
+                    <span class="text-xs font-bold uppercase tracking-[0.2em] text-white">Proyectos Seleccionados</span>
+                </div>
+                
+                <div class="space-y-16 md:space-y-24">
+                    <!-- Project 1 -->
+                    <div class="group grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-center">
+                        <div class="relative overflow-hidden rounded-sm aspect-[16/9] cursor-pointer shadow-2xl shadow-white/5 group/img">
+                            <div class="absolute inset-0 bg-gray-800 transition-transform duration-700 group-hover/img:scale-105" style="background-image: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800'); background-size: cover; background-position: center;">
+                                <div class="absolute inset-0 bg-black/40 group-hover/img:bg-transparent transition-colors duration-500"></div>
+                            </div>
+                            <div class="absolute bottom-4 left-4 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-sm">
+                                <span class="text-xs font-mono text-white">ver live demo →</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col gap-4 md:gap-6 lg:pl-10">
+                            <span class="text-xs font-mono text-gray-500 flex items-center gap-2">
+                                <span class="w-6 md:w-8 h-[1px] bg-gray-500"></span> 01 / FINTECH
+                            </span>
+                            <h3 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white group-hover:text-gray-200 transition-colors duration-300">Dashboard Financiero</h3>
+                            <p class="text-gray-400 text-base md:text-lg font-light leading-relaxed group-hover:text-gray-300 transition-colors">
+                                Plataforma de análisis de datos en tiempo real. Desarrollada con Angular y WebSockets para visualizar transacciones bursátiles con latencia cero.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mt-2">
+                                <span class="px-3 py-1 border border-white/20 text-[10px] uppercase tracking-wider text-white bg-white/5 hover:bg-white/20 transition-colors">Angular</span>
+                                <span class="px-3 py-1 border border-white/20 text-[10px] uppercase tracking-wider text-white bg-white/5 hover:bg-white/20 transition-colors">D3.js</span>
+                                <span class="px-3 py-1 border border-white/20 text-[10px] uppercase tracking-wider text-white bg-white/5 hover:bg-white/20 transition-colors">RxJS</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 2 -->
+                    <div class="group grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-center">
+                        <div class="order-1 lg:order-2 relative overflow-hidden rounded-sm aspect-[16/9] cursor-pointer shadow-2xl shadow-white/5 group/img">
+                            <div class="absolute inset-0 bg-gray-800 transition-transform duration-700 group-hover/img:scale-105" style="background-image: url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800'); background-size: cover; background-position: center;">
+                                <div class="absolute inset-0 bg-black/40 group-hover/img:bg-transparent transition-colors duration-500"></div>
+                            </div>
+                            <div class="absolute bottom-4 left-4 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-sm">
+                                <span class="text-xs font-mono text-white">ver caso de estudio →</span>
+                            </div>
+                        </div>
+                        
+                        <div class="order-2 lg:order-1 flex flex-col gap-4 md:gap-6 lg:pr-10">
+                            <span class="text-xs font-mono text-gray-500 flex items-center gap-2">
+                                <span class="w-6 md:w-8 h-[1px] bg-gray-500"></span> 02 / SAAS
+                            </span>
+                            <h3 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white group-hover:text-gray-200 transition-colors duration-300">Sistema de Gestión</h3>
+                            <p class="text-gray-400 text-base md:text-lg font-light leading-relaxed group-hover:text-gray-300 transition-colors">
+                                Solución empresarial para gestión de recursos. Interfaz minimalista con modo oscuro nativo y gestión de estados compleja mediante NgRx.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mt-2">
+                                <span class="px-3 py-1 border border-white/20 text-[10px] uppercase tracking-wider text-white bg-white/5 hover:bg-white/20 transition-colors">Angular Material</span>
+                                <span class="px-3 py-1 border border-white/20 text-[10px] uppercase tracking-wider text-white bg-white/5 hover:bg-white/20 transition-colors">NgRx</span>
+                                <span class="px-3 py-1 border border-white/20 text-[10px] uppercase tracking-wider text-white bg-white/5 hover:bg-white/20 transition-colors">Firebase</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 3 -->
+                    <div class="group grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-center">
+                        <div class="relative overflow-hidden rounded-sm aspect-[16/9] cursor-pointer shadow-2xl shadow-white/5 group/img">
+                            <div class="absolute inset-0 bg-gray-800 transition-transform duration-700 group-hover/img:scale-105" style="background-image: url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=800'); background-size: cover; background-position: center;">
+                                <div class="absolute inset-0 bg-black/40 group-hover/img:bg-transparent transition-colors duration-500"></div>
+                            </div>
+                            <div class="absolute bottom-4 left-4 opacity-0 group-hover/img:opacity-100 transition-opacity duration-300 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-sm">
+                                <span class="text-xs font-mono text-white">explorar web →</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col gap-4 md:gap-6 lg:pl-10">
+                            <span class="text-xs font-mono text-gray-500 flex items-center gap-2">
+                                <span class="w-6 md:w-8 h-[1px] bg-gray-500"></span> 03 / E-COMMERCE
+                            </span>
+                            <h3 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white group-hover:text-gray-200 transition-colors duration-300">Moda & Retail</h3>
+                            <p class="text-gray-400 text-base md:text-lg font-light leading-relaxed group-hover:text-gray-300 transition-colors">
+                                Experiencia de compra fluida y visual. Animaciones de transición entre rutas y optimización de imágenes para una carga instantánea en móviles.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mt-2">
+                                <span class="px-3 py-1 border border-white/20 text-[10px] uppercase tracking-wider text-white bg-white/5 hover:bg-white/20 transition-colors">PWA</span>
+                                <span class="px-3 py-1 border border-white/20 text-[10px] uppercase tracking-wider text-white bg-white/5 hover:bg-white/20 transition-colors">Stripe</span>
+                                <span class="px-3 py-1 border border-white/20 text-[10px] uppercase tracking-wider text-white bg-white/5 hover:bg-white/20 transition-colors">Tailwind</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="relative py-16 md:py-24 px-4 md:px-6 bg-black overflow-hidden" id="contacto">
+            <div class="absolute top-0 right-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-white opacity-[0.03] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none animate-subtle-pulse"></div>
+            
+            <div class="absolute bottom-10 left-10 text-white/5 font-mono text-xs hidden lg:block select-none pointer-events-none">
+                class SerguzDev {<br/>
+                  constructor() {<br/>
+                    this.passion = true;<br/>
+                  }<br/>
+                }
+            </div>
+            
+            <div class="max-w-[1000px] mx-auto w-full relative z-10">
+                <div class="flex flex-col lg:flex-row border border-white/10 bg-white/[0.02] backdrop-blur-sm shadow-2xl">
+                    <!-- Left Side -->
+                    <div class="w-full lg:w-2/5 p-6 md:p-10 lg:p-12 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between bg-black/40">
+                        <div>
+                            <h2 class="text-2xl md:text-3xl font-bold mb-4 md:mb-6 text-white tracking-tight">Iniciemos Conversación</h2>
+                            <p class="text-gray-400 mb-6 md:mb-8 font-light leading-relaxed text-sm md:text-base">
+                                ¿Listo para escalar tu proyecto? Reserva una consulta técnica gratuita de 30 minutos con el equipo de <span class="text-white font-medium">serguz.dev</span>.
+                            </p>
+                            
+                            <div class="space-y-4 md:space-y-6 mt-8 md:mt-12">
+                                <div class="flex items-start gap-3 md:gap-4 group">
+                                    <div class="mt-1 size-2 bg-white rounded-full group-hover:scale-150 transition-transform duration-300"></div>
+                                    <div class="text-sm text-gray-300">
+                                        <strong class="block text-white mb-1 group-hover:text-white transition-colors">Análisis Técnico</strong>
+                                        Evaluación de arquitectura y stack.
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3 md:gap-4 group">
+                                    <div class="mt-1 size-2 bg-white rounded-full group-hover:scale-150 transition-transform duration-300"></div>
+                                    <div class="text-sm text-gray-300">
+                                        <strong class="block text-white mb-1 group-hover:text-white transition-colors">Presupuesto</strong>
+                                        Estimación transparente de costos.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 md:mt-12">
+                            <a class="flex items-center gap-3 text-white hover:text-gray-300 transition-colors group w-fit" href="https://wa.me/51987315685" target="_blank">
+                                <div class="size-10 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-colors duration-300">
+                                    <span class="material-symbols-outlined text-lg">chat</span>
+                                </div>
+                                <span class="font-bold text-sm tracking-widest uppercase relative">
+                                    Chat WhatsApp
+                                    <span class="absolute bottom-0 left-0 w-0 h-px bg-white group-hover:w-full transition-all duration-300"></span>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Side - Form -->
+                    <div class="w-full lg:w-3/5 p-6 md:p-10 lg:p-12 bg-black/20">
+                        <form class="flex flex-col gap-6 md:gap-8" id="contact-form">
+                            <div class="grid grid-cols-1 gap-6 md:gap-8">
+                                <div class="group relative">
+                                    <input class="peer w-full bg-transparent border-b border-white/20 text-white px-0 py-3 focus:border-white focus:ring-0 outline-none transition-all placeholder-transparent" id="name" name="name" placeholder="Name" required type="text"/>
+                                    <label class="absolute left-0 -top-3.5 text-xs text-gray-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-3 peer-focus:-top-3.5 peer-focus:text-white peer-focus:text-xs uppercase tracking-wider cursor-text" for="name">Nombre Completo</label>
+                                    <div class="absolute bottom-0 left-0 w-0 h-px bg-white transition-all duration-300 peer-focus:w-full"></div>
+                                </div>
+                                
+                                <div class="group relative">
+                                    <input class="peer w-full bg-transparent border-b border-white/20 text-white px-0 py-3 focus:border-white focus:ring-0 outline-none transition-all placeholder-transparent" id="email" name="email" placeholder="Email" required type="email"/>
+                                    <label class="absolute left-0 -top-3.5 text-xs text-gray-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-3 peer-focus:-top-3.5 peer-focus:text-white peer-focus:text-xs uppercase tracking-wider cursor-text" for="email">Email Corporativo</label>
+                                    <div class="absolute bottom-0 left-0 w-0 h-px bg-white transition-all duration-300 peer-focus:w-full"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="group relative">
+                                <select class="peer w-full bg-transparent border-b border-white/20 text-white px-0 py-3 focus:border-white focus:ring-0 outline-none transition-all appearance-none cursor-pointer" id="type" name="type">
+                                    <option class="bg-black text-gray-400" value="">Seleccionar tipo...</option>
+                                    <option class="bg-black" value="spa">Aplicación Web (SPA)</option>
+                                    <option class="bg-black" value="dashboard">Dashboard Corporativo</option>
+                                    <option class="bg-black" value="ecommerce">E-commerce</option>
+                                    <option class="bg-black" value="consultoria">Consultoría Angular</option>
+                                </select>
+                                <label class="absolute left-0 -top-3.5 text-xs text-gray-500 uppercase tracking-wider" for="type">Interés</label>
+                                <span class="material-symbols-outlined absolute right-0 top-3 text-gray-500 pointer-events-none text-sm group-hover:text-white transition-colors">expand_more</span>
+                                <div class="absolute bottom-0 left-0 w-0 h-px bg-white transition-all duration-300 peer-focus:w-full"></div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <button class="w-full cursor-pointer group flex items-center justify-between px-6 py-4 bg-white text-black font-bold uppercase tracking-widest hover:bg-gray-200 transition-all shadow-[0_5px_15px_rgba(255,255,255,0.05)] hover:shadow-[0_8px_25px_rgba(255,255,255,0.1)] transform hover:-translate-y-1 text-sm md:text-base" type="button" onclick="openBookingModal()">
+                                    <span>Agendar Sesión</span>
+                                    <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="border-t border-white/10 bg-black py-12 md:py-16 px-4 md:px-6">
+            <div class="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-start gap-8 md:gap-12">
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center gap-2 group cursor-pointer">
+                        <span class="material-symbols-outlined text-white group-hover:rotate-12 transition-transform duration-300">terminal</span>
+                        <h2 class="text-xl md:text-2xl font-bold tracking-tighter text-white relative">
+                            serguz.dev
+                        </h2>
+                    </div>
+                    <p class="text-sm text-gray-500 max-w-xs leading-relaxed">
+                        Desarrollo de software boutique especializado en ecosistema Angular. Construyendo el futuro web.
+                    </p>
+                </div>
+                
+                <div class="flex gap-8 md:gap-12">
+                    <div class="flex flex-col gap-3 md:gap-4">
+                        <h4 class="text-xs font-bold uppercase text-white tracking-widest">Legal</h4>
+                        <a class="text-sm text-gray-500 hover:text-white transition-colors hover:translate-x-1 inline-block" href="#">Privacidad</a>
+                        <a class="text-sm text-gray-500 hover:text-white transition-colors hover:translate-x-1 inline-block" href="#">Términos</a>
+                    </div>
+                    <div class="flex flex-col gap-3 md:gap-4">
+                        <h4 class="text-xs font-bold uppercase text-white tracking-widest">Social</h4>
+                        <a class="text-sm text-gray-500 hover:text-white transition-colors hover:translate-x-1 inline-block" href="#" target="_blank">LinkedIn</a>
+                        <a class="text-sm text-gray-500 hover:text-white transition-colors hover:translate-x-1 inline-block" href="#" target="_blank">GitHub</a>
+                        <a class="text-sm text-gray-500 hover:text-white transition-colors hover:translate-x-1 inline-block" href="#" target="_blank">Twitter</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="max-w-[1400px] mx-auto mt-12 md:mt-16 pt-6 md:pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-600 uppercase tracking-wider">
+                <span>© 2026 <span class="lowercase">serguz.dev</span> labs.</span>
+                <span>Madrid · México · Remote</span>
+            </div>
+        </footer>
+
+        <!-- Floating WhatsApp Button -->
+        <a class="fixed bottom-6 md:bottom-8 right-6 md:right-8 z-50 flex items-center gap-3 px-4 md:px-6 py-3 md:py-4 bg-white rounded-full shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.4)] transition-all group" href="https://wa.me/51987315685" target="_blank">
+            <span class="font-bold text-black uppercase tracking-wider text-xs md:text-sm hidden sm:block">Chat Directo</span>
+            <div class="size-5 md:size-6 bg-black rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
+                <span class="material-symbols-outlined text-white text-sm">chat</span>
+            </div>
+        </a>
+    </div>
+
+    <!-- Booking Modal -->
+    <div class="modal" id="booking-modal">
+        <div class="bg-black border border-white/20 p-6 md:p-8 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl md:text-3xl font-bold text-white">Agendar Sesión</h2>
+                <button class="text-white hover:text-gray-300" onclick="closeBookingModal()">
+                    <span class="material-symbols-outlined text-3xl">close</span>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Calendar -->
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <button class="text-white hover:text-gray-300" onclick="changeMonth(-1)">
+                            <span class="material-symbols-outlined">chevron_left</span>
+                        </button>
+                        <h3 class="text-lg font-bold text-white" id="current-month"></h3>
+                        <button class="text-white hover:text-gray-300" onclick="changeMonth(1)">
+                            <span class="material-symbols-outlined">chevron_right</span>
+                        </button>
+                    </div>
+                    
+                    <div class="calendar-grid mb-2 text-center text-xs text-gray-500 font-mono">
+                        <div>DOM</div>
+                        <div>LUN</div>
+                        <div>MAR</div>
+                        <div>MIE</div>
+                        <div>JUE</div>
+                        <div>VIE</div>
+                        <div>SAB</div>
+                    </div>
+                    
+                    <div class="calendar-grid" id="calendar-days"></div>
+                </div>
+                
+                <!-- Time Slots -->
+                <div>
+                    <h3 class="text-lg font-bold text-white mb-4">Horarios Disponibles</h3>
+                    <p class="text-sm text-gray-400 mb-4" id="selected-date-display">Selecciona una fecha</p>
+                    <div class="grid grid-cols-2 gap-2" id="time-slots">
+                        <button class="time-slot px-4 py-2 border border-white/20 text-white hover:bg-white/10 transition-all text-sm" onclick="selectTime(this, '10:00')">10:00 AM</button>
+                        <button class="time-slot px-4 py-2 border border-white/20 text-white hover:bg-white/10 transition-all text-sm" onclick="selectTime(this, '11:00')">11:00 AM</button>
+                        <button class="time-slot px-4 py-2 border border-white/20 text-white hover:bg-white/10 transition-all text-sm" onclick="selectTime(this, '12:00')">12:00 PM</button>
+                        <button class="time-slot px-4 py-2 border border-white/20 text-white hover:bg-white/10 transition-all text-sm" onclick="selectTime(this, '14:00')">02:00 PM</button>
+                        <button class="time-slot px-4 py-2 border border-white/20 text-white hover:bg-white/10 transition-all text-sm" onclick="selectTime(this, '15:00')">03:00 PM</button>
+                        <button class="time-slot px-4 py-2 border border-white/20 text-white hover:bg-white/10 transition-all text-sm" onclick="selectTime(this, '16:00')">04:00 PM</button>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <button class="w-full px-6 py-3 bg-white text-black font-bold uppercase tracking-wider hover:bg-gray-200 transition-all" onclick="confirmBooking()">
+                            Confirmar Reserva
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const closeMobileMenu = document.getElementById('close-mobile-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.add('active');
+        });
+
+        closeMobileMenu.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+            });
+        });
+
+        // Reveal animations
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, observerOptions);
+            
+            const revealElements = document.querySelectorAll('.reveal');
+            revealElements.forEach(el => observer.observe(el));
+        });
+
+        // Calendar functionality
+        let currentDate = new Date();
+        let selectedDate = null;
+        let selectedTime = null;
+
+        function openBookingModal() {
+            document.getElementById('booking-modal').classList.add('active');
+            renderCalendar();
+        }
+
+        function closeBookingModal() {
+            document.getElementById('booking-modal').classList.remove('active');
+        }
+
+        function changeMonth(delta) {
+            currentDate.setMonth(currentDate.getMonth() + delta);
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            
+            document.getElementById('current-month').textContent = 
+                `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+            
+            const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+            const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDayOfWeek = firstDay.getDay();
+            
+            const calendarDays = document.getElementById('calendar-days');
+            calendarDays.innerHTML = '';
+            
+            // Empty cells for days before the first day of the month
+            for (let i = 0; i < startingDayOfWeek; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'p-2 text-center text-gray-600';
+                calendarDays.appendChild(emptyCell);
+            }
+            
+            // Days of the month
+            const today = new Date();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayCell = document.createElement('button');
+                const cellDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+                const isPast = cellDate < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                
+                dayCell.className = `p-2 text-center transition-all ${
+                    isPast 
+                        ? 'text-gray-600 cursor-not-allowed' 
+                        : 'text-white hover:bg-white/10 cursor-pointer border border-white/20'
+                }`;
+                dayCell.textContent = day;
+                
+                if (!isPast) {
+                    dayCell.onclick = () => selectDate(cellDate, dayCell);
+                }
+                
+                calendarDays.appendChild(dayCell);
+            }
+        }
+
+        function selectDate(date, element) {
+            selectedDate = date;
+            
+            // Remove previous selection
+            document.querySelectorAll('#calendar-days button').forEach(btn => {
+                btn.classList.remove('bg-white', 'text-black');
+            });
+            
+            // Highlight selected date
+            element.classList.add('bg-white', 'text-black');
+            
+            // Update date display
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('selected-date-display').textContent = 
+                date.toLocaleDateString('es-ES', options);
+        }
+
+        function selectTime(element, time) {
+            selectedTime = time;
+            
+            // Remove previous selection
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            
+            // Highlight selected time
+            element.classList.add('selected');
+        }
+
+        async function confirmBooking() {
+            if (!selectedDate || !selectedTime) {
+                alert('Por favor selecciona una fecha y hora');
+                return;
+            }
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            
+            if (!name || !email) {
+                alert('Por favor completa tus datos de contacto primero');
+                closeBookingModal();
+                document.getElementById('name').focus();
+                return;
+            }
+            
+            // Preparar datos para enviar al backend
+            const bookingData = {
+                name: name,
+                email: email,
+                date: selectedDate.toISOString().split('T')[0],
+                time: selectedTime,
+                type: document.getElementById('type').value || 'Consultoría General',
+                message: 'Reserva realizada desde serguz.dev'
+            };
+            
+            // Mostrar loading
+            const confirmBtn = event.target;
+            const originalText = confirmBtn.innerHTML;
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<span>⏳ Procesando...</span>';
+            
+            try {
+                // Enviar petición al servidor
+                const response = await fetch('/api/bookings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(bookingData)
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Éxito
+                    closeBookingModal();
+                    
+                    // Mostrar mensaje de éxito mejorado
+                    alert(`✅ ¡Reserva confirmada!\n\n📅 Fecha: ${selectedDate.toLocaleDateString('es-ES')}\n🕐 Hora: ${selectedTime}\n📧 Email: ${email}\n\n${data.meetLink ? '🎥 Link de Google Meet enviado a tu correo' : ''}\n\nRecibirás un email de confirmación en breve con todos los detalles.`);
+                    
+                    // Limpiar formulario
+                    document.getElementById('contact-form').reset();
+                } else {
+                    throw new Error(data.error || 'Error al crear la cita');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert(`❌ Error al crear la cita\n\n${error.message}\n\nPor favor, intenta nuevamente o contáctanos por WhatsApp.`);
+            } finally {
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = originalText;
+            }
+        }
+
+        // Initialize calendar on load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCalendar();
+        });
+    </script>
+</body>
+</html>

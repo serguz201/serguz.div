@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración Completada - serguz.dev</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+        }
+        .token-box {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            word-wrap: break-word;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .label {
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .instructions {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .instructions h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        .instructions ol {
+            margin-left: 20px;
+            color: #856404;
+        }
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            width: 100%;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #5568d3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 Autenticación Exitosa</h1>
+        
+        <div class="success">
+            ✅ Tu aplicación ha sido autorizada correctamente para acceder a Google Calendar
+        </div>
+
+        <div class="label">Refresh Token:</div>
+        <div class="token-box" id="refresh-token">
+            Cargando...
+        </div>
+
+        <div class="instructions">
+            <h3>📝 Siguientes Pasos:</h3>
+            <ol>
+                <li>Copia el <strong>Refresh Token</strong> que aparece arriba</li>
+                <li>Abre el archivo <code>.env</code> en la raíz de tu proyecto</li>
+                <li>Pega el token en la variable <code>GOOGLE_REFRESH_TOKEN</code></li>
+                <li>Guarda el archivo</li>
+                <li>Reinicia el servidor con <code>npm start</code></li>
+            </ol>
+        </div>
+
+        <button class="btn" onclick="copyToken()">
+            📋 Copiar Refresh Token
+        </button>
+
+        <button class="btn" onclick="window.close()" style="background: #6c757d; margin-top: 10px;">
+            ✖️ Cerrar Ventana
+        </button>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const refreshToken = urlParams.get('token');
+        
+        if (refreshToken) {
+            document.getElementById('refresh-token').textContent = refreshToken;
+        } else {
+            document.getElementById('refresh-token').textContent = 'No se pudo obtener el token. Intenta nuevamente.';
+        }
+
+        function copyToken() {
+            const token = document.getElementById('refresh-token').textContent;
+            navigator.clipboard.writeText(token).then(() => {
+                const btn = event.target;
+                btn.textContent = '✅ ¡Copiado!';
+                setTimeout(() => {
+                    btn.textContent = '📋 Copiar Refresh Token';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
