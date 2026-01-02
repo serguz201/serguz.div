@@ -10,7 +10,12 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static('.'));
+
+// Root route
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
 
 // Google Calendar Setup
 const oauth2Client = new google.auth.OAuth2(
