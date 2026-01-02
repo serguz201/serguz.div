@@ -61,14 +61,14 @@ module.exports = async (req, res) => {
 
     const event = {
       summary: `Consulta: ${name} - ${type || 'General'}`,
-      description: `Cliente: ${name}\nEmail: ${email}\nTipo: ${type || 'No especificado'}\nMensaje: ${message || 'N/A'}`,
+      description: `Cliente: ${name}\nEmail: ${email}\nTeléfono: ${req.body.phone || 'No proporcionado'}\nTipo: ${type || 'No especificado'}\nMensaje: ${message || 'N/A'}`,
       start: {
         dateTime: startDateTime.toISOString(),
-        timeZone: 'America/Mexico_City',
+        timeZone: 'America/Lima',
       },
       end: {
         dateTime: endDateTime.toISOString(),
-        timeZone: 'America/Mexico_City',
+        timeZone: 'America/Lima',
       },
       attendees: [
         { email: email }

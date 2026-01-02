@@ -452,6 +452,23 @@
                             </div>
                             
                             <div class="group relative">
+                                <div class="flex gap-2">
+                                    <select class="w-24 bg-transparent border-b border-white/20 text-white px-0 py-3 focus:border-white focus:ring-0 outline-none transition-all appearance-none cursor-pointer" id="country-code" name="country-code">
+                                        <option class="bg-black" value="+51">🇵🇪 +51</option>
+                                        <option class="bg-black" value="+1">🇺🇸 +1</option>
+                                        <option class="bg-black" value="+52">🇲🇽 +52</option>
+                                        <option class="bg-black" value="+34">🇪🇸 +34</option>
+                                        <option class="bg-black" value="+54">🇦🇷 +54</option>
+                                        <option class="bg-black" value="+56">🇨🇱 +56</option>
+                                        <option class="bg-black" value="+57">🇨🇴 +57</option>
+                                    </select>
+                                    <input class="peer flex-1 bg-transparent border-b border-white/20 text-white px-0 py-3 focus:border-white focus:ring-0 outline-none transition-all placeholder-transparent" id="phone" name="phone" placeholder="Phone" required type="tel" pattern="[0-9]{9,15}"/>
+                                    <label class="absolute left-28 -top-3.5 text-xs text-gray-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-3 peer-focus:-top-3.5 peer-focus:text-white peer-focus:text-xs uppercase tracking-wider cursor-text pointer-events-none" for="phone">Teléfono</label>
+                                    <div class="absolute bottom-0 left-0 w-0 h-px bg-white transition-all duration-300 peer-focus:w-full"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="group relative">
                                 <select class="peer w-full bg-transparent border-b border-white/20 text-white px-0 py-3 focus:border-white focus:ring-0 outline-none transition-all appearance-none cursor-pointer" id="type" name="type">
                                     <option class="bg-black text-gray-400" value="">Seleccionar tipo...</option>
                                     <option class="bg-black" value="spa">Aplicación Web (SPA)</option>
@@ -721,9 +738,11 @@
             
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
+            const countryCode = document.getElementById('country-code').value;
+            const phone = document.getElementById('phone').value;
             
-            if (!name || !email) {
-                alert('Por favor completa tus datos de contacto primero');
+            if (!name || !email || !phone) {
+                alert('Por favor completa todos tus datos de contacto');
                 closeBookingModal();
                 document.getElementById('name').focus();
                 return;
@@ -733,6 +752,7 @@
             const bookingData = {
                 name: name,
                 email: email,
+                phone: countryCode + phone,
                 date: selectedDate.toISOString().split('T')[0],
                 time: selectedTime,
                 type: document.getElementById('type').value || 'Consultoría General',
