@@ -453,14 +453,89 @@
                             
                             <div class="group relative">
                                 <div class="flex gap-2">
-                                    <select class="w-24 bg-transparent border-b border-white/20 text-white px-0 py-3 focus:border-white focus:ring-0 outline-none transition-all appearance-none cursor-pointer" id="country-code" name="country-code">
-                                        <option class="bg-black" value="+51">🇵🇪 +51</option>
-                                        <option class="bg-black" value="+1">🇺🇸 +1</option>
-                                        <option class="bg-black" value="+52">🇲🇽 +52</option>
-                                        <option class="bg-black" value="+34">🇪🇸 +34</option>
-                                        <option class="bg-black" value="+54">🇦🇷 +54</option>
-                                        <option class="bg-black" value="+56">🇨🇱 +56</option>
-                                        <option class="bg-black" value="+57">🇨🇴 +57</option>
+                                    <select class="w-28 bg-transparent border-b border-white/20 text-white px-0 py-3 focus:border-white focus:ring-0 outline-none transition-all appearance-none cursor-pointer text-sm" id="country-code" name="country-code">
+                                        <!-- América Latina -->
+                                        <option disabled class="bg-black text-gray-500" selected>─ AMÉRICA LATINA ─</option>
+                                        <option class="bg-black" value="+51">🇵🇪 Perú +51</option>
+                                        <option class="bg-black" value="+52">🇲🇽 México +52</option>
+                                        <option class="bg-black" value="+54">🇦🇷 Argentina +54</option>
+                                        <option class="bg-black" value="+56">🇨🇱 Chile +56</option>
+                                        <option class="bg-black" value="+57">🇨🇴 Colombia +57</option>
+                                        <option class="bg-black" value="+55">🇧🇷 Brasil +55</option>
+                                        <option class="bg-black" value="+58">🇻🇪 Venezuela +58</option>
+                                        <option class="bg-black" value="+591">🇧🇴 Bolivia +591</option>
+                                        <option class="bg-black" value="+595">🇵🇾 Paraguay +595</option>
+                                        <option class="bg-black" value="+598">🇺🇾 Uruguay +598</option>
+                                        <option class="bg-black" value="+593">🇪🇨 Ecuador +593</option>
+                                        <option class="bg-black" value="+502">🇬🇹 Guatemala +502</option>
+                                        <option class="bg-black" value="+503">🇸🇻 El Salvador +503</option>
+                                        <option class="bg-black" value="+504">🇭🇳 Honduras +504</option>
+                                        <option class="bg-black" value="+505">🇳🇮 Nicaragua +505</option>
+                                        <option class="bg-black" value="+506">🇨🇷 Costa Rica +506</option>
+                                        <option class="bg-black" value="+507">🇵🇦 Panamá +507</option>
+                                        <!-- Europa -->
+                                        <option disabled class="bg-black text-gray-500">─ EUROPA ─</option>
+                                        <option class="bg-black" value="+34">🇪🇸 España +34</option>
+                                        <option class="bg-black" value="+44">🇬🇧 Reino Unido +44</option>
+                                        <option class="bg-black" value="+33">🇫🇷 Francia +33</option>
+                                        <option class="bg-black" value="+49">🇩🇪 Alemania +49</option>
+                                        <option class="bg-black" value="+39">🇮🇹 Italia +39</option>
+                                        <option class="bg-black" value="+31">🇳🇱 Países Bajos +31</option>
+                                        <option class="bg-black" value="+32">🇧🇪 Bélgica +32</option>
+                                        <option class="bg-black" value="+41">🇨🇭 Suiza +41</option>
+                                        <option class="bg-black" value="+43">🇦🇹 Austria +43</option>
+                                        <option class="bg-black" value="+47">🇳🇴 Noruega +47</option>
+                                        <option class="bg-black" value="+46">🇸🇪 Suecia +46</option>
+                                        <option class="bg-black" value="+45">🇩🇰 Dinamarca +45</option>
+                                        <option class="bg-black" value="+358">🇫🇮 Finlandia +358</option>
+                                        <option class="bg-black" value="+372">🇪🇪 Estonia +372</option>
+                                        <option class="bg-black" value="+371">🇱🇻 Letonia +371</option>
+                                        <option class="bg-black" value="+370">🇱🇹 Lituania +370</option>
+                                        <option class="bg-black" value="+48">🇵🇱 Polonia +48</option>
+                                        <option class="bg-black" value="+420">🇨🇿 Chequia +420</option>
+                                        <option class="bg-black" value="+421">🇸🇰 Eslovaquia +421</option>
+                                        <option class="bg-black" value="+36">🇭🇺 Hungría +36</option>
+                                        <option class="bg-black" value="+40">🇷🇴 Rumania +40</option>
+                                        <option class="bg-black" value="+359">🇧🇬 Bulgaria +359</option>
+                                        <option class="bg-black" value="+381">🇷🇸 Serbia +381</option>
+                                        <option class="bg-black" value="+385">🇭🇷 Croacia +385</option>
+                                        <option class="bg-black" value="+386">🇸🇮 Eslovenia +386</option>
+                                        <option class="bg-black" value="+389">🇲🇰 Macedonia +389</option>
+                                        <option class="bg-black" value="+387">🇧🇦 Bosnia y Herzegovina +387</option>
+                                        <option class="bg-black" value="+353">🇮🇪 Irlanda +353</option>
+                                        <option class="bg-black" value="+30">🇬🇷 Grecia +30</option>
+                                        <option class="bg-black" value="+90">🇹🇷 Turquía +90</option>
+                                        <!-- América del Norte -->
+                                        <option disabled class="bg-black text-gray-500">─ AMÉRICA DEL NORTE ─</option>
+                                        <option class="bg-black" value="+1">🇺🇸 Estados Unidos +1</option>
+                                        <option class="bg-black" value="+1">🇨🇦 Canadá +1</option>
+                                        <!-- Asia -->
+                                        <option disabled class="bg-black text-gray-500">─ ASIA ─</option>
+                                        <option class="bg-black" value="+86">🇨🇳 China +86</option>
+                                        <option class="bg-black" value="+81">🇯🇵 Japón +81</option>
+                                        <option class="bg-black" value="+82">🇰🇷 Corea del Sur +82</option>
+                                        <option class="bg-black" value="+880">🇧🇩 Bangladesh +880</option>
+                                        <option class="bg-black" value="+91">🇮🇳 India +91</option>
+                                        <option class="bg-black" value="+92">🇵🇰 Pakistán +92</option>
+                                        <option class="bg-black" value="+93">🇦🇫 Afganistán +93</option>
+                                        <option class="bg-black" value="+98">🇮🇷 Irán +98</option>
+                                        <option class="bg-black" value="+972">🇮🇱 Israel +972</option>
+                                        <option class="bg-black" value="+966">🇸🇦 Arabia Saudita +966</option>
+                                        <option class="bg-black" value="+971">🇦🇪 Emiratos Árabes +971</option>
+                                        <option class="bg-black" value="+65">🇸🇬 Singapur +65</option>
+                                        <option class="bg-black" value="+60">🇲🇾 Malasia +60</option>
+                                        <option class="bg-black" value="+66">🇹🇭 Tailandia +66</option>
+                                        <option class="bg-black" value="+62">🇮🇩 Indonesia +62</option>
+                                        <option class="bg-black" value="+63">🇵🇭 Filipinas +63</option>
+                                        <option class="bg-black" value="+84">🇻🇳 Vietnam +84</option>
+                                        <!-- Oceanía y África -->
+                                        <option disabled class="bg-black text-gray-500">─ OCEANÍA Y ÁFRICA ─</option>
+                                        <option class="bg-black" value="+61">🇦🇺 Australia +61</option>
+                                        <option class="bg-black" value="+64">🇳🇿 Nueva Zelanda +64</option>
+                                        <option class="bg-black" value="+27">🇿🇦 Sudáfrica +27</option>
+                                        <option class="bg-black" value="+234">🇳🇬 Nigeria +234</option>
+                                        <option class="bg-black" value="+212">🇲🇦 Marruecos +212</option>
+                                        <option class="bg-black" value="+20">🇪🇬 Egipto +20</option>
                                     </select>
                                     <input class="peer flex-1 bg-transparent border-b border-white/20 text-white px-0 py-3 focus:border-white focus:ring-0 outline-none transition-all placeholder-transparent" id="phone" name="phone" placeholder="Phone" required type="tel" pattern="[0-9]{9,15}"/>
                                     <label class="absolute left-28 -top-3.5 text-xs text-gray-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-3 peer-focus:-top-3.5 peer-focus:text-white peer-focus:text-xs uppercase tracking-wider cursor-text pointer-events-none" for="phone">Teléfono</label>

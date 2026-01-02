@@ -182,7 +182,29 @@ module.exports = async (req, res) => {
 
     await transporter.sendMail(ownerNotification);
 
-    res.status(200).json({ 
+    // Email de recordatorio al dueño
+    const reminderEmail = {
+      from: process.env.EMAIL_USER,
+      to: process.env.EMAIL_USER,
+      subject: `📝 Recordatorio: Cita con ${name} - ${startDateTime.toLocaleDateString('es-ES')} ${time}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; padding: 20px; background: #fff3cd; border-left: 4px solid #ffc107;">
+          <h2 style="color: #856404; margin-bottom: 15px;">📅 Recordatorio de Cita</h2>
+          <div style="background: white; padding: 15px; border-radius: 4px; color: #333;">
+            <p><strong>Cliente:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Teléfono:</strong> ${req.body.phone || 'No proporcionado'}</p>
+            <p><strong>Fecha:</strong> ${startDateTime.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            <p><strong>Hora:</strong> ${time}</p>
+            <p><strong>Tipo:</strong> ${type || 'No especificado'}</p>
+            ${meetLink ? `<p><strong>🎥 Meet:</strong> <a href="${meetLink}">${meetLink}</a></p>` : ''}
+          </div>
+          <p style="color: #666; font-size: 12px; margin-top: 15px;">Este es un recordatorio automático de tu sistema de citas.</p>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(reminderEmail); 
       success: true, 
       message: 'Cita creada exitosamente',
       eventId: calendarResponse.data.id,
