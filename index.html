@@ -446,7 +446,7 @@
                                 
                                 <div class="group relative">
                                     <input class="peer w-full bg-transparent border-b border-white/20 text-white px-0 py-3 focus:border-white focus:ring-0 outline-none transition-all placeholder-transparent" id="email" name="email" placeholder="Email" required type="email"/>
-                                    <label class="absolute left-0 -top-3.5 text-xs text-gray-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-3 peer-focus:-top-3.5 peer-focus:text-white peer-focus:text-xs uppercase tracking-wider cursor-text" for="email">Email Corporativo</label>
+                                    <label class="absolute left-0 -top-3.5 text-xs text-gray-500 transition-all peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-placeholder-shown:top-3 peer-focus:-top-3.5 peer-focus:text-white peer-focus:text-xs uppercase tracking-wider cursor-text" for="email">Email</label>
                                     <div class="absolute bottom-0 left-0 w-0 h-px bg-white transition-all duration-300 peer-focus:w-full"></div>
                                 </div>
                             </div>
@@ -459,7 +459,7 @@
                                             <span class="material-symbols-outlined text-xs ml-1">expand_more</span>
                                         </button>
                                         <div class="absolute z-50 hidden top-12 left-0 bg-black border border-white/20 rounded shadow-lg" id="country-dropdown" style="width: 320px; max-height: 400px; overflow-y: auto;">
-                                            <div class="sticky top-0 bg-black border-b border-white/20 p-3">
+                                            <div class="sticky top-0 z-10 bg-black border-b border-white/20 p-3">
                                                 <input type="text" id="country-search" placeholder="Buscar país..." class="w-full bg-white/10 border border-white/20 text-white px-3 py-2 rounded text-sm placeholder-gray-500 focus:border-white focus:ring-0 outline-none" onkeyup="filterCountries()"/>
                                             </div>
                                             <div id="country-list"></div>
@@ -690,7 +690,7 @@
                 if (country.region !== currentRegion) {
                     currentRegion = country.region;
                     const regionHeader = document.createElement('div');
-                    regionHeader.className = 'px-3 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider sticky top-10 bg-black/80 border-t border-white/10';
+                    regionHeader.className = 'px-3 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider sticky top-10 z-0 bg-black/80 border-t border-white/10';
                     regionHeader.textContent = currentRegion;
                     list.appendChild(regionHeader);
                 }
