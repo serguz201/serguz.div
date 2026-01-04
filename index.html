@@ -820,11 +820,15 @@
             }
             
             // Days of the month
-            const today = new Date();
+            // Get today in Lima timezone
+            const nowUtc = new Date();
+            const todayLima = new Date(nowUtc.toLocaleString('en-US', { timeZone: 'America/Lima' }));
+            const todayDate = new Date(todayLima.getFullYear(), todayLima.getMonth(), todayLima.getDate());
+            
             for (let day = 1; day <= daysInMonth; day++) {
                 const dayCell = document.createElement('button');
                 const cellDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-                const isPast = cellDate < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                const isPast = cellDate < todayDate;
                 
                 dayCell.className = `p-2 text-center transition-all ${
                     isPast 
@@ -884,19 +888,32 @@
                 
                 const allTimes = ['10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'];
                 
+                // Get current time in Lima timezone (UTC-5)
+                const now = new Date();
+                const limaTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Lima' }));
+                const today = new Date(limaTime.getFullYear(), limaTime.getMonth(), limaTime.getDate());
+                const isToday = date.getTime() === today.getTime();
+                const currentHourLima = limaTime.getHours();
+                const currentMinuteLima = limaTime.getMinutes();
+                
                 allTimes.forEach(time => {
                     const button = document.createElement('button');
                     const isAvailable = data.availableSlots.includes(time);
+                    const [hours, minutes] = time.split(':').map(Number);
+                    
+                    // Check if time has already passed today
+                    const isPast = isToday && (hours < currentHourLima || (hours === currentHourLima && minutes <= currentMinuteLima));
+                    const canBook = isAvailable && !isPast;
                     
                     button.className = `time-slot px-4 py-2 border transition-all text-sm ${
-                        isAvailable 
+                        canBook
                             ? 'border-white/20 text-white hover:bg-white/10 cursor-pointer' 
                             : 'border-gray-700 text-gray-600 cursor-not-allowed opacity-50 bg-gray-900/30'
                     }`;
                     button.textContent = timeMapping[time];
                     button.type = 'button';
                     
-                    if (isAvailable) {
+                    if (canBook) {
                         button.onclick = () => selectTime(button, time);
                     } else {
                         button.disabled = true;
