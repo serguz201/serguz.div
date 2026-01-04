@@ -88,16 +88,19 @@ module.exports = async (req, res) => {
     workingHours.forEach(time => {
       const [hours, minutes] = time.split(':').map(Number);
       
-      // Create slot time in Lima timezone, then convert to UTC
-      // Create as a regular date first (in local/Lima time context)
-      const slotStartLima = new Date(year, month - 1, day, hours, minutes, 0, 0);
-      const slotEndLima = new Date(year, month - 1, day, hours + 1, minutes, 0, 0);
+      // IMPORTANT: Create UTC times directly
+      // A 09:00 Lima time = 14:00 UTC (09 + 5)
+      // A 22:00 Lima time = 03:00 UTC next day (22 + 5 = 27 = 3 next day)
       
-      // Convert Lima time to UTC by adding 5 hours
-      const slotStartUTC = new Date(slotStartLima.getTime() + (5 * 60 * 60 * 1000));
-      const slotEndUTC = new Date(slotEndLima.getTime() + (5 * 60 * 60 * 1000));
+      // Create start in UTC (adding 5 hours offset)
+      const startHourUTC = hours + 5;
+      const slotStartUTC = new Date(Date.UTC(year, month - 1, day, startHourUTC, minutes, 0, 0));
+      
+      // Create end in UTC (1 hour later, let Date.UTC handle day overflow)
+      const endHourUTC = hours + 6;
+      const slotEndUTC = new Date(Date.UTC(year, month - 1, day, endHourUTC, minutes, 0, 0));
 
-      console.log(`[AVAILABILITY] Checking ${time}: Lima [${slotStartLima.toISOString()}] -> UTC [${slotStartUTC.toISOString()} to ${slotEndUTC.toISOString()}]`);
+      console.log(`[AVAILABILITY] Checking ${time} Lima = ${slotStartUTC.toISOString()} to ${slotEndUTC.toISOString()}`);
 
       // Check overlap with booked events
       const isBooked = bookedEventSlots.some(event => {
@@ -117,10 +120,9 @@ module.exports = async (req, res) => {
     console.log(`[AVAILABILITY] Available slots: [${availableSlots.join(', ')}]`);
     console.log(`[AVAILABILITY] Booked slots: [${bookedSlots.join(', ')}]`);
 
-    console.log(`[AVAILABILITY] Result - Available: ${availableSlots.join(',')} Booked: ${bookedSlots.join(',')}`);
     res.status(200).json({ availableSlots, bookedSlots });
   } catch (error) {
     console.error('Error fetching availability:', error);
     res.status(500).json({ error: 'Error fetching availability' });
   }
-};};
+};

@@ -54,44 +54,69 @@ app.get('/api/availability', async (req, res) => {
       return res.status(400).json({ error: 'Date parameter is required' });
     }
 
-    const startOfDay = new Date(date);
-    startOfDay.setHours(0, 0, 0, 0);
+    // Parse date as YYYY-MM-DD (from client in Lima timezone)
+    const [year, month, day] = date.split('-').map(Number);
+    console.log(`[SERVER] Checking date: ${date} (${year}-${month}-${day})`);
     
-    const endOfDay = new Date(date);
-    endOfDay.setHours(23, 59, 59, 999);
+    // Lima is UTC-5
+    // So: 2026-01-05 00:00 Lima = 2026-01-05 05:00 UTC
+    // And: 2026-01-05 23:59 Lima = 2026-01-06 04:59 UTC
+    const startOfDayUTC = new Date(Date.UTC(year, month - 1, day, 5, 0, 0, 0));
+    const endOfDayUTC = new Date(Date.UTC(year, month - 1, day + 1, 5, 0, 0, 0));
+    
+    console.log(`[SERVER] UTC range: ${startOfDayUTC.toISOString()} to ${endOfDayUTC.toISOString()}`);
 
     // Obtener eventos del calendario
     const response = await calendar.events.list({
       calendarId: 'primary',
-      timeMin: startOfDay.toISOString(),
-      timeMax: endOfDay.toISOString(),
+      timeMin: startOfDayUTC.toISOString(),
+      timeMax: endOfDayUTC.toISOString(),
       singleEvents: true,
       orderBy: 'startTime',
+      timeZone: 'America/Lima'
     });
 
-    const bookedSlots = response.data.items.map(event => ({
-      start: event.start.dateTime,
-      end: event.end.dateTime
-    }));
+    console.log(`[SERVER] Found ${response.data.items.length} events`);
+    response.data.items.forEach(event => {
+      console.log(`[SERVER] Event: ${event.summary} - ${event.start.dateTime} to ${event.end.dateTime}`);
+    });
 
-    // Horarios de trabajo (10:00 - 18:00)
+    const bookedSlots = response.data.items
+      .filter(event => event.start.dateTime)
+      .map(event => ({
+        start: new Date(event.start.dateTime),
+        end: new Date(event.end.dateTime)
+      }));
+
+    // Horarios de trabajo en Lima: 09:00-13:00 y 16:00-23:00 (11 slots de 1 hora)
     const workingHours = [
-      '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'
+      '09:00', '10:00', '11:00', '12:00',
+      '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'
     ];
 
-    // Filtrar horarios ocupados
+    console.log(`[SERVER] Horarios disponibles: ${workingHours.join(', ')}`);
+
+    // Filtrar horarios ocupados - Crear horarios en UTC igual que api/availability.js
     const availableSlots = workingHours.filter(time => {
-      const [hours, minutes] = time.split(':');
-      const slotTime = new Date(date);
-      slotTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      const [hours, minutes] = time.split(':').map(Number);
+      
+      // Create UTC times (adding 5 hours offset from Lima time)
+      const startHourUTC = hours + 5;
+      const slotStartUTC = new Date(Date.UTC(year, month - 1, day, startHourUTC, minutes, 0, 0));
+      const slotEndUTC = new Date(Date.UTC(year, month - 1, day, startHourUTC + 1, minutes, 0, 0));
+
+      console.log(`[SERVER] Checking ${time}: ${slotStartUTC.toISOString()} to ${slotEndUTC.toISOString()}`);
 
       return !bookedSlots.some(booked => {
-        const bookedStart = new Date(booked.start);
-        const bookedEnd = new Date(booked.end);
-        return slotTime >= bookedStart && slotTime < bookedEnd;
+        const isOverlap = slotStartUTC < booked.end && slotEndUTC > booked.start;
+        if (isOverlap) {
+          console.log(`[SERVER]   BOOKED: overlaps with ${booked.start} to ${booked.end}`);
+        }
+        return isOverlap;
       });
     });
 
+    console.log(`[SERVER] Slots disponibles después de filtrar: ${availableSlots.join(', ')}`);
     res.json({ availableSlots });
   } catch (error) {
     console.error('Error fetching availability:', error);
