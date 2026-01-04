@@ -204,7 +204,9 @@ module.exports = async (req, res) => {
       `
     };
 
-    await transporter.sendMail(reminderEmail); 
+    await transporter.sendMail(reminderEmail);
+    
+    return res.json({
       success: true, 
       message: 'Cita creada exitosamente',
       eventId: calendarResponse.data.id,
