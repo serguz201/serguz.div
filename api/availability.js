@@ -85,11 +85,16 @@ module.exports = async (req, res) => {
     workingHours.forEach(time => {
       const [hours, minutes] = time.split(':').map(Number);
       
-      // Create slot time in UTC
-      // If slot is 16:00 Lima (UTC-5), then in UTC it's 21:00
-      // 16:00 Lima + 5 hours = 21:00 UTC
-      const slotStartUTC = new Date(Date.UTC(year, month - 1, day, hours + 5, minutes, 0, 0));
-      const slotEndUTC = new Date(Date.UTC(year, month - 1, day, hours + 6, minutes, 0, 0));
+      // Create slot time in Lima timezone, then convert to UTC
+      // Create as a regular date first (in local/Lima time context)
+      const slotStartLima = new Date(year, month - 1, day, hours, minutes, 0, 0);
+      const slotEndLima = new Date(year, month - 1, day, hours + 1, minutes, 0, 0);
+      
+      // Convert Lima time to UTC by adding 5 hours
+      const slotStartUTC = new Date(slotStartLima.getTime() + (5 * 60 * 60 * 1000));
+      const slotEndUTC = new Date(slotEndLima.getTime() + (5 * 60 * 60 * 1000));
+
+      console.log(`[AVAILABILITY] Checking ${time}: Lima [${slotStartLima.toISOString()}] -> UTC [${slotStartUTC.toISOString()} to ${slotEndUTC.toISOString()}]`);
 
       // Check overlap with booked events
       const isBooked = bookedEventSlots.some(event => {
