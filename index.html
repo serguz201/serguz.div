@@ -843,6 +843,7 @@
 
         function selectDate(date, element) {
             selectedDate = date;
+            selectedTime = null;
             
             // Remove previous selection
             document.querySelectorAll('#calendar-days button').forEach(btn => {
@@ -856,6 +857,56 @@
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             document.getElementById('selected-date-display').textContent = 
                 date.toLocaleDateString('es-ES', options);
+            
+            // Load available times for this date
+            loadTimeSlots(date);
+        }
+
+        async function loadTimeSlots(date) {
+            const dateStr = date.toISOString().split('T')[0];
+            
+            try {
+                const response = await fetch(`/api/availability?date=${dateStr}`);
+                const data = await response.json();
+                
+                const timeSlots = document.getElementById('time-slots');
+                timeSlots.innerHTML = '';
+                
+                const timeMapping = {
+                    '10:00': '10:00 AM',
+                    '11:00': '11:00 AM',
+                    '12:00': '12:00 PM',
+                    '14:00': '02:00 PM',
+                    '15:00': '03:00 PM',
+                    '16:00': '04:00 PM',
+                    '17:00': '05:00 PM'
+                };
+                
+                const allTimes = ['10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'];
+                
+                allTimes.forEach(time => {
+                    const button = document.createElement('button');
+                    const isAvailable = data.availableSlots.includes(time);
+                    
+                    button.className = `time-slot px-4 py-2 border transition-all text-sm ${
+                        isAvailable 
+                            ? 'border-white/20 text-white hover:bg-white/10 cursor-pointer' 
+                            : 'border-gray-700 text-gray-600 cursor-not-allowed opacity-50 bg-gray-900/30'
+                    }`;
+                    button.textContent = timeMapping[time];
+                    button.type = 'button';
+                    
+                    if (isAvailable) {
+                        button.onclick = () => selectTime(button, time);
+                    } else {
+                        button.disabled = true;
+                    }
+                    
+                    timeSlots.appendChild(button);
+                });
+            } catch (error) {
+                console.error('Error loading time slots:', error);
+            }
         }
 
         function selectTime(element, time) {

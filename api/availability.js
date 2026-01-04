@@ -53,7 +53,7 @@ module.exports = async (req, res) => {
       orderBy: 'startTime',
     });
 
-    const bookedSlots = response.data.items.map(event => ({
+    const bookedEventSlots = response.data.items.map(event => ({
       start: event.start.dateTime,
       end: event.end.dateTime
     }));
@@ -67,14 +67,26 @@ module.exports = async (req, res) => {
       const slotTime = new Date(date);
       slotTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
-      return !bookedSlots.some(booked => {
+      return !bookedEventSlots.some(booked => {
         const bookedStart = new Date(booked.start);
         const bookedEnd = new Date(booked.end);
         return slotTime >= bookedStart && slotTime < bookedEnd;
       });
     });
 
-    res.status(200).json({ availableSlots });
+    const bookedSlots = workingHours.filter(time => {
+      const [hours, minutes] = time.split(':');
+      const slotTime = new Date(date);
+      slotTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+      return bookedEventSlots.some(booked => {
+        const bookedStart = new Date(booked.start);
+        const bookedEnd = new Date(booked.end);
+        return slotTime >= bookedStart && slotTime < bookedEnd;
+      });
+    });
+
+    res.status(200).json({ availableSlots, bookedSlots });
   } catch (error) {
     console.error('Error fetching availability:', error);
     res.status(500).json({ error: 'Error fetching availability' });
