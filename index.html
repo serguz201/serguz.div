@@ -873,14 +873,15 @@
             const day = String(date.getDate()).padStart(2, '0');
             const dateStr = `${year}-${month}-${day}`;
             
+            console.log(`[FRONTEND] Loading slots for date: ${dateStr}`);
+            
             try {
                 const response = await fetch(`/api/availability?date=${dateStr}`);
                 const data = await response.json();
                 
-                const timeSlots = document.getElementById('time-slots');
-                timeSlots.innerHTML = '';
-                
-                const timeMapping = {
+                console.log(`[FRONTEND] API Response:`, data);
+                console.log(`[FRONTEND] Available slots:`, data.availableSlots);
+                console.log(`[FRONTEND] Booked slots:`, data.bookedSlots);
                     '09:00': '09:00 AM',
                     '10:00': '10:00 AM',
                     '11:00': '11:00 AM',

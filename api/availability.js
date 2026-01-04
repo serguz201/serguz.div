@@ -41,12 +41,15 @@ module.exports = async (req, res) => {
 
     // Parse date as YYYY-MM-DD (from client in Lima timezone)
     const [year, month, day] = date.split('-').map(Number);
+    console.log(`[AVAILABILITY] Checking date: ${date} (${year}-${month}-${day})`);
     
     // Lima is UTC-5
     // So: 2026-01-07 00:00 Lima = 2026-01-07 05:00 UTC
     // And: 2026-01-07 23:59 Lima = 2026-01-08 04:59 UTC
     const startOfDayUTC = new Date(Date.UTC(year, month - 1, day, 5, 0, 0, 0));
     const endOfDayUTC = new Date(Date.UTC(year, month - 1, day + 1, 5, 0, 0, 0));
+    
+    console.log(`[AVAILABILITY] UTC range: ${startOfDayUTC.toISOString()} to ${endOfDayUTC.toISOString()}`);
 
     const response = await calendar.events.list({
       calendarId: 'primary',
@@ -57,13 +60,18 @@ module.exports = async (req, res) => {
       timeZone: 'America/Lima'
     });
 
+    console.log(`[AVAILABILITY] Found ${response.data.items.length} events`);
+    
     // Convert all events to UTC dates
     const bookedEventSlots = response.data.items
       .filter(event => event.start.dateTime)
-      .map(event => ({
-        start: new Date(event.start.dateTime),
-        end: new Date(event.end.dateTime)
-      }));
+      .map(event => {
+        console.log(`[AVAILABILITY] Event: ${event.summary} from ${event.start.dateTime} to ${event.end.dateTime}`);
+        return {
+          start: new Date(event.start.dateTime),
+          end: new Date(event.end.dateTime)
+        };
+      });
 
     // Working hours in Lima: 9am-1pm and 4pm-11pm
     const workingHours = [
@@ -89,12 +97,15 @@ module.exports = async (req, res) => {
       });
 
       if (isBooked) {
+        console.log(`[AVAILABILITY] ${time} BOOKED`);
         bookedSlots.push(time);
       } else {
+        console.log(`[AVAILABILITY] ${time} AVAILABLE`);
         availableSlots.push(time);
       }
     });
 
+    console.log(`[AVAILABILITY] Result - Available: ${availableSlots.join(',')} Booked: ${bookedSlots.join(',')}`);
     res.status(200).json({ availableSlots, bookedSlots });
   } catch (error) {
     console.error('Error fetching availability:', error);
