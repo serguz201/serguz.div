@@ -58,31 +58,42 @@ module.exports = async (req, res) => {
       end: event.end.dateTime
     }));
 
+    // Working hours: 9am-1pm (09:00-13:00) and 4pm-11pm (16:00-23:00)
     const workingHours = [
-      '10:00', '11:00', '12:00', '14:00', '15:00', '16:00', '17:00'
+      '09:00', '10:00', '11:00', '12:00', // 9am-1pm
+      '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00' // 4pm-11pm
     ];
 
     const availableSlots = workingHours.filter(time => {
       const [hours, minutes] = time.split(':');
-      const slotTime = new Date(date);
-      slotTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      const slotStart = new Date(date);
+      slotStart.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      
+      // Session duration is 1 hour
+      const slotEnd = new Date(slotStart);
+      slotEnd.setHours(slotEnd.getHours() + 1);
 
+      // Check if any booked event overlaps with this 1-hour slot
       return !bookedEventSlots.some(booked => {
         const bookedStart = new Date(booked.start);
         const bookedEnd = new Date(booked.end);
-        return slotTime >= bookedStart && slotTime < bookedEnd;
+        // Overlap occurs if: slot starts before event ends AND slot ends after event starts
+        return slotStart < bookedEnd && slotEnd > bookedStart;
       });
     });
 
     const bookedSlots = workingHours.filter(time => {
       const [hours, minutes] = time.split(':');
-      const slotTime = new Date(date);
-      slotTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      const slotStart = new Date(date);
+      slotStart.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      
+      const slotEnd = new Date(slotStart);
+      slotEnd.setHours(slotEnd.getHours() + 1);
 
       return bookedEventSlots.some(booked => {
         const bookedStart = new Date(booked.start);
         const bookedEnd = new Date(booked.end);
-        return slotTime >= bookedStart && slotTime < bookedEnd;
+        return slotStart < bookedEnd && slotEnd > bookedStart;
       });
     });
 

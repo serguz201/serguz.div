@@ -57,7 +57,7 @@ module.exports = async (req, res) => {
     startDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
     
     const endDateTime = new Date(startDateTime);
-    endDateTime.setMinutes(endDateTime.getMinutes() + 30);
+    endDateTime.setHours(endDateTime.getHours() + 1);
 
     const event = {
       summary: `Consulta: ${name} - ${type || 'General'}`,
