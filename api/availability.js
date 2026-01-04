@@ -39,17 +39,22 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'Date parameter is required' });
     }
 
-    // Parse date as YYYY-MM-DD and create as UTC
+    // Parse date as YYYY-MM-DD
     const [year, month, day] = date.split('-').map(Number);
-    const startOfDay = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
-    const endOfDay = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
+    
+    // Create date range for Lima timezone (UTC-5)
+    // Start: 2026-01-04 00:00:00 Lima time = 2026-01-04 05:00:00 UTC
+    // End: 2026-01-04 23:59:59 Lima time = 2026-01-05 04:59:59 UTC
+    const startOfDayLima = new Date(Date.UTC(year, month - 1, day, 5, 0, 0, 0)); // 00:00 Lima = 05:00 UTC
+    const endOfDayLima = new Date(Date.UTC(year, month - 1, day + 1, 5, 0, 0, 0)); // 00:00 next day Lima = 05:00 UTC next day
 
     const response = await calendar.events.list({
       calendarId: 'primary',
-      timeMin: startOfDay.toISOString(),
-      timeMax: endOfDay.toISOString(),
+      timeMin: startOfDayLima.toISOString(),
+      timeMax: endOfDayLima.toISOString(),
       singleEvents: true,
       orderBy: 'startTime',
+      timeZone: 'America/Lima'
     });
 
     const bookedEventSlots = response.data.items
@@ -59,18 +64,21 @@ module.exports = async (req, res) => {
         end: event.end.dateTime
       }));
 
-    // Working hours: 9am-1pm (09:00-13:00) and 4pm-11pm (16:00-23:00)
+    // Working hours: 9am-1pm (09:00-13:00) and 4pm-11pm (16:00-23:00) in Lima timezone
     const workingHours = [
       '09:00', '10:00', '11:00', '12:00', // 9am-1pm
       '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00' // 4pm-11pm
     ];
 
+    // Create slot times using Lima timezone
     const availableSlots = workingHours.filter(time => {
       const [hours, minutes] = time.split(':');
-      const slotStart = new Date(date);
-      slotStart.setHours(parseInt(hours), parseInt(minutes), 0, 0);
       
-      // Session duration is 1 hour
+      // Create time in Lima timezone
+      const limaTime = new Date(year, month - 1, day, parseInt(hours), parseInt(minutes), 0, 0);
+      // Convert to ISO string considering Lima is UTC-5
+      const slotStart = new Date(limaTime.getTime() + (5 * 60 * 60 * 1000)); // Add 5 hours for UTC
+      
       const slotEnd = new Date(slotStart);
       slotEnd.setHours(slotEnd.getHours() + 1);
 
@@ -78,15 +86,15 @@ module.exports = async (req, res) => {
       return !bookedEventSlots.some(booked => {
         const bookedStart = new Date(booked.start);
         const bookedEnd = new Date(booked.end);
-        // Overlap occurs if: slot starts before event ends AND slot ends after event starts
         return slotStart < bookedEnd && slotEnd > bookedStart;
       });
     });
 
     const bookedSlots = workingHours.filter(time => {
       const [hours, minutes] = time.split(':');
-      const slotStart = new Date(date);
-      slotStart.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      
+      const limaTime = new Date(year, month - 1, day, parseInt(hours), parseInt(minutes), 0, 0);
+      const slotStart = new Date(limaTime.getTime() + (5 * 60 * 60 * 1000));
       
       const slotEnd = new Date(slotStart);
       slotEnd.setHours(slotEnd.getHours() + 1);
