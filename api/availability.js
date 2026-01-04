@@ -42,6 +42,7 @@ module.exports = async (req, res) => {
     // Parse date as YYYY-MM-DD (from client in Lima timezone)
     const [year, month, day] = date.split('-').map(Number);
     console.log(`[AVAILABILITY] Checking date: ${date} (${year}-${month}-${day})`);
+    console.log(`[AVAILABILITY] WORKING HOURS: 09:00-12:00, 16:00-22:00 (11 total slots)`);
     
     // Lima is UTC-5
     // So: 2026-01-07 00:00 Lima = 2026-01-07 05:00 UTC
@@ -82,6 +83,8 @@ module.exports = async (req, res) => {
     const availableSlots = [];
     const bookedSlots = [];
 
+    console.log(`[AVAILABILITY] Processing ${workingHours.length} working hour slots...`);
+
     workingHours.forEach(time => {
       const [hours, minutes] = time.split(':').map(Number);
       
@@ -109,6 +112,10 @@ module.exports = async (req, res) => {
         availableSlots.push(time);
       }
     });
+
+    console.log(`[AVAILABILITY] FINAL RESULT - Available: ${availableSlots.length}, Booked: ${bookedSlots.length}`);
+    console.log(`[AVAILABILITY] Available slots: [${availableSlots.join(', ')}]`);
+    console.log(`[AVAILABILITY] Booked slots: [${bookedSlots.join(', ')}]`);
 
     console.log(`[AVAILABILITY] Result - Available: ${availableSlots.join(',')} Booked: ${bookedSlots.join(',')}`);
     res.status(200).json({ availableSlots, bookedSlots });
