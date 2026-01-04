@@ -39,13 +39,14 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'Date parameter is required' });
     }
 
-    // Parse date as YYYY-MM-DD (this is in Lima timezone from client)
+    // Parse date as YYYY-MM-DD (from client in Lima timezone)
     const [year, month, day] = date.split('-').map(Number);
     
-    // Create start and end of day in UTC considering Lima is UTC-5
-    // When it's 2026-01-05 00:00:00 in Lima, it's 2026-01-05 05:00:00 UTC
+    // Lima is UTC-5
+    // So: 2026-01-07 00:00 Lima = 2026-01-07 05:00 UTC
+    // And: 2026-01-07 23:59 Lima = 2026-01-08 04:59 UTC
     const startOfDayUTC = new Date(Date.UTC(year, month - 1, day, 5, 0, 0, 0));
-    const endOfDayUTC = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
+    const endOfDayUTC = new Date(Date.UTC(year, month - 1, day + 1, 5, 0, 0, 0));
 
     const response = await calendar.events.list({
       calendarId: 'primary',
@@ -56,34 +57,33 @@ module.exports = async (req, res) => {
       timeZone: 'America/Lima'
     });
 
+    // Convert all events to UTC dates
     const bookedEventSlots = response.data.items
-      .filter(event => event.start.dateTime) // Only events with specific times
+      .filter(event => event.start.dateTime)
       .map(event => ({
         start: new Date(event.start.dateTime),
         end: new Date(event.end.dateTime)
       }));
 
-    // Working hours in Lima timezone: 9am-1pm and 4pm-11pm
+    // Working hours in Lima: 9am-1pm and 4pm-11pm
     const workingHours = [
-      '09:00', '10:00', '11:00', '12:00', // 9am-1pm
-      '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00' // 4pm-11pm
+      '09:00', '10:00', '11:00', '12:00',
+      '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'
     ];
 
-    // Check availability
     const availableSlots = [];
     const bookedSlots = [];
 
     workingHours.forEach(time => {
       const [hours, minutes] = time.split(':').map(Number);
       
-      // Create slot start time in Lima timezone
-      // Convert: 2026-01-05 09:00:00 Lima = 2026-01-05 14:00:00 UTC
-      const slotStartLima = new Date(year, month - 1, day, hours, minutes, 0, 0);
-      const slotStartUTC = new Date(slotStartLima.getTime() + (5 * 60 * 60 * 1000));
-      
-      const slotEndUTC = new Date(slotStartUTC.getTime() + (60 * 60 * 1000)); // 1 hour duration
+      // Create slot time in UTC
+      // If slot is 16:00 Lima (UTC-5), then in UTC it's 21:00
+      // 16:00 Lima + 5 hours = 21:00 UTC
+      const slotStartUTC = new Date(Date.UTC(year, month - 1, day, hours + 5, minutes, 0, 0));
+      const slotEndUTC = new Date(Date.UTC(year, month - 1, day, hours + 6, minutes, 0, 0));
 
-      // Check if slot overlaps with any booked event
+      // Check overlap with booked events
       const isBooked = bookedEventSlots.some(event => {
         return slotStartUTC < event.end && slotEndUTC > event.start;
       });
@@ -100,9 +100,4 @@ module.exports = async (req, res) => {
     console.error('Error fetching availability:', error);
     res.status(500).json({ error: 'Error fetching availability' });
   }
-};
-  } catch (error) {
-    console.error('Error fetching availability:', error);
-    res.status(500).json({ error: 'Error fetching availability' });
-  }
-};
+};};
