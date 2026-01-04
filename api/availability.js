@@ -39,11 +39,10 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'Date parameter is required' });
     }
 
-    const startOfDay = new Date(date);
-    startOfDay.setHours(0, 0, 0, 0);
-    
-    const endOfDay = new Date(date);
-    endOfDay.setHours(23, 59, 59, 999);
+    // Parse date as YYYY-MM-DD and create as UTC
+    const [year, month, day] = date.split('-').map(Number);
+    const startOfDay = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
+    const endOfDay = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
 
     const response = await calendar.events.list({
       calendarId: 'primary',
@@ -53,10 +52,12 @@ module.exports = async (req, res) => {
       orderBy: 'startTime',
     });
 
-    const bookedEventSlots = response.data.items.map(event => ({
-      start: event.start.dateTime,
-      end: event.end.dateTime
-    }));
+    const bookedEventSlots = response.data.items
+      .filter(event => event.start.dateTime) // Only include events with specific times
+      .map(event => ({
+        start: event.start.dateTime,
+        end: event.end.dateTime
+      }));
 
     // Working hours: 9am-1pm (09:00-13:00) and 4pm-11pm (16:00-23:00)
     const workingHours = [
