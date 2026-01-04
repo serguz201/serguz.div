@@ -882,6 +882,11 @@
                 console.log(`[FRONTEND] API Response:`, data);
                 console.log(`[FRONTEND] Available slots:`, data.availableSlots);
                 console.log(`[FRONTEND] Booked slots:`, data.bookedSlots);
+                
+                const timeSlots = document.getElementById('time-slots');
+                timeSlots.innerHTML = '';
+                
+                const timeMapping = {
                     '09:00': '09:00 AM',
                     '10:00': '10:00 AM',
                     '11:00': '11:00 AM',
@@ -933,6 +938,7 @@
             } catch (error) {
                 console.error('Error loading time slots:', error);
             }
+        }
         }
 
         function selectTime(element, time) {
