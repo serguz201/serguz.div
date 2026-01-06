@@ -55,34 +55,24 @@ module.exports = async (req, res) => {
     const [hours, minutes] = time.split(':');
     
     // Crear fecha en zona horaria de Lima (UTC-5)
-    // El date viene como YYYY-MM-DD desde el cliente
+    // El date viene como YYYY-MM-DD desde el cliente (siempre en Lima)
     const [year, month, day] = date.split('-');
-    const startDateTime = new Date(year, parseInt(month) - 1, day, parseInt(hours), parseInt(minutes), 0, 0);
     
-    const endDateTime = new Date(startDateTime);
-    endDateTime.setHours(endDateTime.getHours() + 1);
-
-    // Formatear para Google Calendar en zona horaria Lima sin usar toISOString()
-    // Google Calendar maneja correctamente el timeZone cuando se envía en ISO format
-    const formatDateTimeForCalendar = (date) => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      const seconds = String(date.getSeconds()).padStart(2, '0');
-      return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-    };
+    // Crear string ISO con offset de Lima explícito (-05:00)
+    // Esto asegura que Google Calendar interprete correctamente la hora en zona horaria Lima
+    const startDateTimeStr = `${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00-05:00`;
+    const endHours = (parseInt(hours) + 1).toString().padStart(2, '0');
+    const endDateTimeStr = `${year}-${month}-${day}T${endHours}:${String(minutes).padStart(2, '0')}:00-05:00`;
 
     const event = {
       summary: `Consulta: ${name} - ${type || 'General'}`,
       description: `Cliente: ${name}\nEmail: ${email}\nTeléfono: ${req.body.phone || 'No proporcionado'}\nTipo: ${type || 'No especificado'}\nMensaje: ${message || 'N/A'}`,
       start: {
-        dateTime: formatDateTimeForCalendar(startDateTime),
+        dateTime: startDateTimeStr,
         timeZone: 'America/Lima',
       },
       end: {
-        dateTime: formatDateTimeForCalendar(endDateTime),
+        dateTime: endDateTimeStr,
         timeZone: 'America/Lima',
       },
       attendees: [
@@ -113,6 +103,9 @@ module.exports = async (req, res) => {
     const meetLink = calendarResponse.data.conferenceData?.entryPoints?.[0]?.uri;
 
     // Email al cliente
+    // Crear objeto Date para mostrar la fecha en el email correctamente
+    const startDate = new Date(`${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00Z`);
+    
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
@@ -136,10 +129,10 @@ module.exports = async (req, res) => {
             
             <div style="background: #111; border: 1px solid #333; padding: 20px; border-radius: 4px; margin-bottom: 30px;">
               <p style="margin: 10px 0; color: #ccc;">
-                <strong style="color: #fff;">📅 Fecha:</strong> ${startDateTime.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                <strong style="color: #fff;">📅 Fecha:</strong> ${startDate.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
               </p>
               <p style="margin: 10px 0; color: #ccc;">
-                <strong style="color: #fff;">🕐 Hora:</strong> ${time}
+                <strong style="color: #fff;">🕐 Hora:</strong> ${time} (Hora Lima - Perú)
               </p>
               <p style="margin: 10px 0; color: #ccc;">
                 <strong style="color: #fff;">⏱ Duración:</strong> 30 minutos
@@ -186,8 +179,8 @@ module.exports = async (req, res) => {
           <h2>Nueva cita agendada</h2>
           <p><strong>Cliente:</strong> ${name}</p>
           <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Fecha:</strong> ${startDateTime.toLocaleDateString('es-ES')}</p>
-          <p><strong>Hora:</strong> ${time}</p>
+          <p><strong>Fecha:</strong> ${startDate.toLocaleDateString('es-ES')}</p>
+          <p><strong>Hora:</strong> ${time} (Hora Lima - Perú)</p>
           <p><strong>Tipo:</strong> ${type || 'No especificado'}</p>
           <p><strong>Mensaje:</strong> ${message || 'N/A'}</p>
           ${meetLink ? `<p><strong>Meet:</strong> <a href="${meetLink}">${meetLink}</a></p>` : ''}
@@ -201,7 +194,7 @@ module.exports = async (req, res) => {
     const reminderEmail = {
       from: process.env.EMAIL_USER,
       to: process.env.EMAIL_USER,
-      subject: `📝 Recordatorio: Cita con ${name} - ${startDateTime.toLocaleDateString('es-ES')} ${time}`,
+      subject: `📝 Recordatorio: Cita con ${name} - ${startDate.toLocaleDateString('es-ES')} ${time}`,
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px; background: #fff3cd; border-left: 4px solid #ffc107;">
           <h2 style="color: #856404; margin-bottom: 15px;">📅 Recordatorio de Cita</h2>
@@ -209,8 +202,8 @@ module.exports = async (req, res) => {
             <p><strong>Cliente:</strong> ${name}</p>
             <p><strong>Email:</strong> ${email}</p>
             <p><strong>Teléfono:</strong> ${req.body.phone || 'No proporcionado'}</p>
-            <p><strong>Fecha:</strong> ${startDateTime.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
-            <p><strong>Hora:</strong> ${time}</p>
+            <p><strong>Fecha:</strong> ${startDate.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            <p><strong>Hora:</strong> ${time} (Hora Lima - Perú)</p>
             <p><strong>Tipo:</strong> ${type || 'No especificado'}</p>
             ${meetLink ? `<p><strong>🎥 Meet:</strong> <a href="${meetLink}">${meetLink}</a></p>` : ''}
           </div>
