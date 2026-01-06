@@ -881,15 +881,27 @@
             }
             
             // Preparar datos para enviar al backend
+            // IMPORTANTE: No usar toISOString() porque convierte a UTC y puede cambiar el día
+            // Usar la fecha local directamente
+            const year = selectedDate.getFullYear();
+            const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+            const day = String(selectedDate.getDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
+            
             const bookingData = {
                 name: name,
                 email: email,
                 phone: countryCode + phone,
-                date: selectedDate.toISOString().split('T')[0],
+                date: dateStr,
                 time: selectedTime,
                 type: document.getElementById('type').value || 'Consultoría General',
                 message: 'Reserva realizada desde serguz.dev'
             };
+            
+            // DEBUG: Log de datos que se envían
+            console.log('[FRONTEND BOOKING] selectedDate:', selectedDate);
+            console.log('[FRONTEND BOOKING] dateStr enviado:', dateStr);
+            console.log('[FRONTEND BOOKING] bookingData:', bookingData);
             
             // Mostrar loading
             const confirmBtn = event.target;

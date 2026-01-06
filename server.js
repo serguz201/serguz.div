@@ -129,30 +129,45 @@ app.post('/api/bookings', async (req, res) => {
   try {
     const { name, email, date, time, type, message } = req.body;
 
+    console.log('[BOOKING] ===== INICIO DE BOOKING =====');
+    console.log('[BOOKING] Datos recibidos:', { date, time, name, email });
+
     // Validación
     if (!name || !email || !date || !time) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    // Crear fecha de inicio y fin
-    const [hours, minutes] = time.split(':');
-    const startDateTime = new Date(date);
-    startDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+    // SOLUCIÓN: Usar la fecha y hora TAL CUAL vienen del cliente
+    // El formato es: date = "2026-01-07", time = "10:00"
+    // Creamos datetime string sin conversión a UTC
+    const [year, month, day] = date.split('-');
+    const startDateTimeStr = `${date}T${time}:00`;
     
-    const endDateTime = new Date(startDateTime);
-    endDateTime.setMinutes(endDateTime.getMinutes() + 30); // Sesión de 30 minutos
+    // Calcular hora de fin (+30 minutos)
+    const [hours, minutes] = time.split(':');
+    const endMinutes = parseInt(minutes) + 30;
+    let endHour = parseInt(hours);
+    let endMin = endMinutes;
+    if (endMinutes >= 60) {
+      endHour += 1;
+      endMin = endMinutes - 60;
+    }
+    const endDateTimeStr = `${date}T${String(endHour).padStart(2, '0')}:${String(endMin).padStart(2, '0')}:00`;
+    
+    console.log('[BOOKING] startDateTime:', startDateTimeStr);
+    console.log('[BOOKING] endDateTime:', endDateTimeStr);
 
     // Crear evento en Google Calendar
     const event = {
       summary: `Consulta: ${name} - ${type || 'General'}`,
       description: `Cliente: ${name}\nEmail: ${email}\nTipo: ${type || 'No especificado'}\nMensaje: ${message || 'N/A'}`,
       start: {
-        dateTime: startDateTime.toISOString(),
-        timeZone: 'America/Mexico_City', // Ajustar según tu zona horaria
+        dateTime: startDateTimeStr,
+        timeZone: 'America/Lima',
       },
       end: {
-        dateTime: endDateTime.toISOString(),
-        timeZone: 'America/Mexico_City',
+        dateTime: endDateTimeStr,
+        timeZone: 'America/Lima',
       },
       attendees: [
         { email: email }
@@ -181,6 +196,19 @@ app.post('/api/bookings', async (req, res) => {
 
     const meetLink = calendarResponse.data.conferenceData?.entryPoints?.[0]?.uri;
 
+    // Formatear fecha para el email usando los valores originales (sin conversión UTC)
+    const monthNames = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 
+                        'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    const dayNames = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+    
+    // Calcular día de la semana usando UTC para evitar conversiones
+    const tempDate = new Date(Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day)));
+    const dayOfWeek = dayNames[tempDate.getUTCDay()];
+    const monthName = monthNames[parseInt(month) - 1];
+    const formattedDate = `${dayOfWeek}, ${parseInt(day)} de ${monthName} de ${year}`;
+    
+    console.log('[BOOKING] Fecha formateada para email:', formattedDate);
+
     // Enviar email de confirmación al cliente
     const mailOptions = {
       from: process.env.EMAIL_USER,
@@ -205,10 +233,10 @@ app.post('/api/bookings', async (req, res) => {
             
             <div style="background: #111; border: 1px solid #333; padding: 20px; border-radius: 4px; margin-bottom: 30px;">
               <p style="margin: 10px 0; color: #ccc;">
-                <strong style="color: #fff;">📅 Fecha:</strong> ${startDateTime.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                <strong style="color: #fff;">📅 Fecha:</strong> ${formattedDate}
               </p>
               <p style="margin: 10px 0; color: #ccc;">
-                <strong style="color: #fff;">🕐 Hora:</strong> ${time}
+                <strong style="color: #fff;">🕐 Hora:</strong> ${time} (Hora Lima - Perú)
               </p>
               <p style="margin: 10px 0; color: #ccc;">
                 <strong style="color: #fff;">⏱ Duración:</strong> 30 minutos
@@ -246,6 +274,7 @@ app.post('/api/bookings', async (req, res) => {
     await transporter.sendMail(mailOptions);
 
     // Enviar notificación al dueño
+    const shortFormattedDate = `${parseInt(day)}/${parseInt(month)}/${year}`;
     const ownerNotification = {
       from: process.env.EMAIL_USER,
       to: process.env.EMAIL_USER, // Tu email
@@ -255,8 +284,8 @@ app.post('/api/bookings', async (req, res) => {
           <h2>Nueva cita agendada</h2>
           <p><strong>Cliente:</strong> ${name}</p>
           <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Fecha:</strong> ${startDateTime.toLocaleDateString('es-ES')}</p>
-          <p><strong>Hora:</strong> ${time}</p>
+          <p><strong>Fecha:</strong> ${shortFormattedDate}</p>
+          <p><strong>Hora:</strong> ${time} (Hora Lima)</p>
           <p><strong>Tipo:</strong> ${type || 'No especificado'}</p>
           <p><strong>Mensaje:</strong> ${message || 'N/A'}</p>
           ${meetLink ? `<p><strong>Meet:</strong> <a href="${meetLink}">${meetLink}</a></p>` : ''}
