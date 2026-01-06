@@ -152,12 +152,12 @@
                     Proyectos
                     <span class="absolute -bottom-1 left-0 w-0 h-[1px] bg-white group-hover:w-full transition-all duration-300"></span>
                 </a>
-                <a class="text-xs uppercase tracking-widest text-gray-400 hover:text-white transition-colors relative group" href="#tecnologia">
-                    Stack
+                <a class="text-xs uppercase tracking-widest text-gray-400 hover:text-white transition-colors relative group cursor-pointer" onclick="const el = document.getElementById('contact'); const offset = el.getBoundingClientRect().top + window.pageYOffset - 120; window.scrollTo({ top: offset, behavior: 'smooth' })">
+                    Contacto
                     <span class="absolute -bottom-1 left-0 w-0 h-[1px] bg-white group-hover:w-full transition-all duration-300"></span>
                 </a>
-                <a class="text-xs uppercase tracking-widest text-gray-400 hover:text-white transition-colors relative group" href="#contacto">
-                    Contacto
+                <a class="text-xs uppercase tracking-widest text-gray-400 hover:text-white transition-colors relative group" href="#tecnologia">
+                    Stack
                     <span class="absolute -bottom-1 left-0 w-0 h-[1px] bg-white group-hover:w-full transition-all duration-300"></span>
                 </a>
             </div>
@@ -183,8 +183,8 @@
             </button>
             <div class="flex flex-col gap-6 mt-12">
                 <a class="text-sm uppercase tracking-widest text-gray-400 hover:text-white transition-colors" href="#proyectos">Proyectos</a>
+                <a class="text-sm uppercase tracking-widest text-gray-400 hover:text-white transition-colors cursor-pointer" onclick="const el = document.getElementById('contact'); const offset = el.getBoundingClientRect().top + window.pageYOffset - 120; window.scrollTo({ top: offset, behavior: 'smooth' }); document.getElementById('mobile-menu').classList.remove('active');">Contacto</a>
                 <a class="text-sm uppercase tracking-widest text-gray-400 hover:text-white transition-colors" href="#tecnologia">Stack</a>
-                <a class="text-sm uppercase tracking-widest text-gray-400 hover:text-white transition-colors" href="#contacto">Contacto</a>
                 <a class="flex items-center gap-2 px-4 py-2 bg-white text-black text-xs font-bold uppercase tracking-wider hover:bg-gray-200 transition-all rounded-sm mt-4" href="https://wa.me/51987315685" target="_blank">
                     <span>WhatsApp</span>
                     <span class="material-symbols-outlined text-base">arrow_outward</span>
@@ -206,10 +206,6 @@
             </div>
             
             <div class="relative z-10 max-w-[1200px] w-full px-4 md:px-6 flex flex-col items-center text-center">
-                <div class="mb-6 inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/20 bg-black/40 backdrop-blur-md animate-fade-in-up" style="animation-delay: 0.1s;">
-                    <span class="size-2 rounded-full bg-green-500 animate-pulse"></span>
-                    <span class="text-[10px] uppercase tracking-[0.2em] text-gray-300"><span class="lowercase">serguz.dev</span> — Disponible</span>
-                </div>
                 
                 <h1 class="text-4xl md:text-6xl lg:text-8xl xl:text-9xl font-bold tracking-tighter text-white mb-6 md:mb-8 mix-blend-difference animate-fade-in-up" style="animation-delay: 0.3s;">
                     INNOVACIÓN <br/> 
@@ -217,7 +213,7 @@
                 </h1>
                 
                 <p class="text-gray-400 text-base md:text-lg lg:text-xl max-w-2xl leading-relaxed font-light mb-8 md:mb-12 px-4 animate-fade-in-up" style="animation-delay: 0.5s;">
-                    Arquitectura de software de alto nivel y desarrollo Angular para marcas que exigen excelencia técnica
+                    Arquitectura de software de alto nivel y desarrollo para marcas que exigen excelencia técnica
                 </p>
                 
                 <div class="flex flex-col sm:flex-row gap-4 md:gap-6 w-full sm:w-auto justify-center px-4 animate-fade-in-up" style="animation-delay: 0.7s;">
@@ -225,7 +221,7 @@
                         <span class="absolute inset-0 bg-black transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></span>
                         <span class="relative z-10 group-hover:text-white transition-colors duration-300">Ver Portfolio</span>
                     </a>
-                    <button class="group flex items-center justify-center px-6 md:px-8 py-3 md:py-4 border border-white text-white font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all relative overflow-hidden text-sm md:text-base" onclick="openBookingModal()">
+                    <button class="group flex items-center justify-center px-6 md:px-8 py-3 md:py-4 border border-white text-white font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all relative overflow-hidden text-sm md:text-base" onclick="const el = document.getElementById('contact'); const offset = el.getBoundingClientRect().top + window.pageYOffset - 120; window.scrollTo({ top: offset, behavior: 'smooth' })">
                         <span class="absolute inset-0 bg-white transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-in-out"></span>
                         <span class="relative z-10 group-hover:text-black">Agendar Cita</span>
                     </button>
@@ -235,56 +231,6 @@
             <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-float opacity-50 cursor-pointer hover:opacity-100 transition-opacity">
                 <span class="text-[10px] uppercase tracking-widest">Scroll</span>
                 <span class="material-symbols-outlined animate-bounce">keyboard_arrow_down</span>
-            </div>
-        </div>
-
-        <!-- Tech Stack Section -->
-        <div class="py-16 md:py-24 px-4 md:px-6 bg-black border-t border-white/5" id="tecnologia">
-            <div class="max-w-[1400px] mx-auto">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-16 border-b border-white/10 pb-8">
-                    <div>
-                        <h3 class="text-xs font-bold uppercase tracking-[0.2em] text-gray-500 mb-2 flex items-center gap-2">
-                            <span class="w-2 h-2 bg-white rounded-full"></span>
-                            Nuestro Core
-                        </h3>
-                        <h2 class="text-2xl md:text-3xl lg:text-5xl font-bold text-white">Tecnología de Vanguardia</h2>
-                    </div>
-                    <div class="mt-6 md:mt-0 flex gap-2 md:gap-4 flex-wrap">
-                        <span class="px-3 md:px-4 py-1 md:py-2 border border-white/20 rounded-full text-[10px] md:text-xs font-mono text-gray-300 hover:border-white/50 hover:bg-white/5 transition-all cursor-default">Angular 17+</span>
-                        <span class="px-3 md:px-4 py-1 md:py-2 border border-white/20 rounded-full text-[10px] md:text-xs font-mono text-gray-300 hover:border-white/50 hover:bg-white/5 transition-all cursor-default">TypeScript</span>
-                        <span class="px-3 md:px-4 py-1 md:py-2 border border-white/20 rounded-full text-[10px] md:text-xs font-mono text-gray-300 hover:border-white/50 hover:bg-white/5 transition-all cursor-default">Node.js</span>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-white/10 border border-white/10">
-                    <div class="bg-black p-6 md:p-8 group hover:bg-zinc-900 transition-all duration-500 relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-white/10 transition-all duration-700"></div>
-                        <span class="material-symbols-outlined text-3xl md:text-4xl mb-4 md:mb-6 text-white font-thin group-hover:scale-110 transition-transform duration-300 block w-fit">architecture</span>
-                        <h3 class="text-lg md:text-xl font-bold mb-2 md:mb-3 text-white">Arquitectura Modular</h3>
-                        <p class="text-sm text-gray-500 leading-relaxed group-hover:text-gray-300 transition-colors">Diseño escalable y mantenible basado en componentes desacoplados y micro-frontends.</p>
-                    </div>
-                    
-                    <div class="bg-black p-6 md:p-8 group hover:bg-zinc-900 transition-all duration-500 relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-white/10 transition-all duration-700"></div>
-                        <span class="material-symbols-outlined text-3xl md:text-4xl mb-4 md:mb-6 text-white font-thin group-hover:scale-110 transition-transform duration-300 block w-fit">bolt</span>
-                        <h3 class="text-lg md:text-xl font-bold mb-2 md:mb-3 text-white">Alto Rendimiento</h3>
-                        <p class="text-sm text-gray-500 leading-relaxed group-hover:text-gray-300 transition-colors">Optimización extrema de Core Web Vitals y estrategias de carga perezosa.</p>
-                    </div>
-                    
-                    <div class="bg-black p-6 md:p-8 group hover:bg-zinc-900 transition-all duration-500 relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-white/10 transition-all duration-700"></div>
-                        <span class="material-symbols-outlined text-3xl md:text-4xl mb-4 md:mb-6 text-white font-thin group-hover:scale-110 transition-transform duration-300 block w-fit">security</span>
-                        <h3 class="text-lg md:text-xl font-bold mb-2 md:mb-3 text-white">Seguridad Robusta</h3>
-                        <p class="text-sm text-gray-500 leading-relaxed group-hover:text-gray-300 transition-colors">Implementación de estándares OWASP y autenticación segura con JWT/OAuth2.</p>
-                    </div>
-                    
-                    <div class="bg-black p-6 md:p-8 group hover:bg-zinc-900 transition-all duration-500 relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-white/10 transition-all duration-700"></div>
-                        <span class="material-symbols-outlined text-3xl md:text-4xl mb-4 md:mb-6 text-white font-thin group-hover:scale-110 transition-transform duration-300 block w-fit">api</span>
-                        <h3 class="text-lg md:text-xl font-bold mb-2 md:mb-3 text-white">Integración API</h3>
-                        <p class="text-sm text-gray-500 leading-relaxed group-hover:text-gray-300 transition-colors">Conexiones fluidas con servicios RESTful y GraphQL para datos en tiempo real.</p>
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -344,7 +290,7 @@
                                 Solución empresarial para gestión de recursos. Interfaz minimalista con modo oscuro nativo y gestión de estados compleja mediante NgRx.
                             </p>
                             <div class="flex flex-wrap gap-2 mt-2">
-                                <span class="px-3 py-1 border border-white/20 text-[10px] uppercase tracking-wider text-white bg-white/5 hover:bg-white/20 transition-colors">Angular Material</span>
+                                <span class="px-3 py-1 border border-white/20 text-[10px] uppercase tracking-wider text-white bg-white/5 hover:bg-white/20 transition-colors">Angular</span>
                                 <span class="px-3 py-1 border border-white/20 text-[10px] uppercase tracking-wider text-white bg-white/5 hover:bg-white/20 transition-colors">NgRx</span>
                                 <span class="px-3 py-1 border border-white/20 text-[10px] uppercase tracking-wider text-white bg-white/5 hover:bg-white/20 transition-colors">Firebase</span>
                             </div>
@@ -393,14 +339,14 @@
                 }
             </div>
             
-            <div class="max-w-[1000px] mx-auto w-full relative z-10">
+            <div class="max-w-[1000px] mx-auto w-full relative z-10" id="contact">
                 <div class="flex flex-col lg:flex-row border border-white/10 bg-white/[0.02] backdrop-blur-sm shadow-2xl">
                     <!-- Left Side -->
                     <div class="w-full lg:w-2/5 p-6 md:p-10 lg:p-12 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between bg-black/40">
                         <div>
                             <h2 class="text-2xl md:text-3xl font-bold mb-4 md:mb-6 text-white tracking-tight">Iniciemos Conversación</h2>
                             <p class="text-gray-400 mb-6 md:mb-8 font-light leading-relaxed text-sm md:text-base">
-                                ¿Listo para escalar tu proyecto? Reserva una consulta técnica gratuita de 30 minutos con el equipo de <span class="text-white font-medium">serguz.dev</span>.
+                                ¿Listo para escalar tu proyecto? Reserva una consulta técnica gratuita de 60 minutos con el equipo de <span class="text-white font-medium">serguz.dev</span>.
                             </p>
                             
                             <div class="space-y-4 md:space-y-6 mt-8 md:mt-12">
@@ -478,7 +424,7 @@
                                     <option class="bg-black" value="spa">Aplicación Web (SPA)</option>
                                     <option class="bg-black" value="dashboard">Dashboard Corporativo</option>
                                     <option class="bg-black" value="ecommerce">E-commerce</option>
-                                    <option class="bg-black" value="consultoria">Consultoría Angular</option>
+                                    <option class="bg-black" value="consultoria">Consultoría</option>
                                 </select>
                                 <label class="absolute left-0 -top-3.5 text-xs text-gray-500 uppercase tracking-wider" for="type">Interés</label>
                                 <span class="material-symbols-outlined absolute right-0 top-3 text-gray-500 pointer-events-none text-sm group-hover:text-white transition-colors">expand_more</span>
@@ -496,42 +442,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Footer -->
-        <footer class="border-t border-white/10 bg-black py-12 md:py-16 px-4 md:px-6">
-            <div class="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-start gap-8 md:gap-12">
-                <div class="flex flex-col gap-4">
-                    <div class="flex items-center gap-2 group cursor-pointer">
-                        <span class="material-symbols-outlined text-white group-hover:rotate-12 transition-transform duration-300">terminal</span>
-                        <h2 class="text-xl md:text-2xl font-bold tracking-tighter text-white relative">
-                            serguz.dev
-                        </h2>
-                    </div>
-                    <p class="text-sm text-gray-500 max-w-xs leading-relaxed">
-                        Desarrollo de software boutique especializado en ecosistema Angular. Construyendo el futuro web.
-                    </p>
-                </div>
-                
-                <div class="flex gap-8 md:gap-12">
-                    <div class="flex flex-col gap-3 md:gap-4">
-                        <h4 class="text-xs font-bold uppercase text-white tracking-widest">Legal</h4>
-                        <a class="text-sm text-gray-500 hover:text-white transition-colors hover:translate-x-1 inline-block" href="#">Privacidad</a>
-                        <a class="text-sm text-gray-500 hover:text-white transition-colors hover:translate-x-1 inline-block" href="#">Términos</a>
-                    </div>
-                    <div class="flex flex-col gap-3 md:gap-4">
-                        <h4 class="text-xs font-bold uppercase text-white tracking-widest">Social</h4>
-                        <a class="text-sm text-gray-500 hover:text-white transition-colors hover:translate-x-1 inline-block" href="#" target="_blank">LinkedIn</a>
-                        <a class="text-sm text-gray-500 hover:text-white transition-colors hover:translate-x-1 inline-block" href="#" target="_blank">GitHub</a>
-                        <a class="text-sm text-gray-500 hover:text-white transition-colors hover:translate-x-1 inline-block" href="#" target="_blank">Twitter</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="max-w-[1400px] mx-auto mt-12 md:mt-16 pt-6 md:pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-600 uppercase tracking-wider">
-                <span>© 2026 <span class="lowercase">serguz.dev</span> labs.</span>
-                <span>Madrid · México · Remote</span>
-            </div>
-        </footer>
 
         <!-- Floating WhatsApp Button -->
         <a class="fixed bottom-6 md:bottom-8 right-6 md:right-8 z-50 flex items-center gap-3 px-4 md:px-6 py-3 md:py-4 bg-white rounded-full shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.4)] transition-all group" href="https://wa.me/51987315685" target="_blank">
@@ -1025,5 +935,99 @@
             renderCalendar();
         });
     </script>
+
+    <!-- Tech Stack Section -->
+    <div class="py-16 md:py-24 px-4 md:px-6 bg-black border-t border-white/5" id="tecnologia">
+        <div class="max-w-[1400px] mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-16 border-b border-white/10 pb-8">
+                <div>
+                    <h3 class="text-xs font-bold uppercase tracking-[0.2em] text-gray-500 mb-2 flex items-center gap-2">
+                        <span class="w-2 h-2 bg-white rounded-full"></span>
+                        Nuestro Core
+                    </h3>
+                    <h2 class="text-2xl md:text-3xl lg:text-5xl font-bold text-white">Tecnología de Vanguardia</h2>
+                </div>
+                <div class="mt-6 md:mt-0 flex gap-2 md:gap-4 flex-wrap">
+                    <span class="px-3 md:px-4 py-1 md:py-2 border border-white/20 rounded-full text-[10px] md:text-xs font-mono text-gray-300 hover:border-white/50 hover:bg-white/5 transition-all cursor-default">Angular 17+</span>
+                    <span class="px-3 md:px-4 py-1 md:py-2 border border-white/20 rounded-full text-[10px] md:text-xs font-mono text-gray-300 hover:border-white/50 hover:bg-white/5 transition-all cursor-default">TypeScript</span>
+                    <span class="px-3 md:px-4 py-1 md:py-2 border border-white/20 rounded-full text-[10px] md:text-xs font-mono text-gray-300 hover:border-white/50 hover:bg-white/5 transition-all cursor-default">Node.js</span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-white/10 border border-white/10">
+                <div class="bg-black p-6 md:p-8 group hover:bg-zinc-900 transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-white/10 transition-all duration-700"></div>
+                    <span class="material-symbols-outlined text-3xl md:text-4xl mb-4 md:mb-6 text-white font-thin group-hover:scale-110 transition-transform duration-300 block w-fit">architecture</span>
+                    <h3 class="text-lg md:text-xl font-bold mb-2 md:mb-3 text-white">Arquitectura Modular</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed group-hover:text-gray-300 transition-colors">Diseño escalable y mantenible basado en componentes desacoplados y micro-frontends.</p>
+                </div>
+                
+                <div class="bg-black p-6 md:p-8 group hover:bg-zinc-900 transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-white/10 transition-all duration-700"></div>
+                    <span class="material-symbols-outlined text-3xl md:text-4xl mb-4 md:mb-6 text-white font-thin group-hover:scale-110 transition-transform duration-300 block w-fit">bolt</span>
+                    <h3 class="text-lg md:text-xl font-bold mb-2 md:mb-3 text-white">Alto Rendimiento</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed group-hover:text-gray-300 transition-colors">Optimización extrema de Core Web Vitals y estrategias de carga perezosa.</p>
+                </div>
+                
+                <div class="bg-black p-6 md:p-8 group hover:bg-zinc-900 transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-white/10 transition-all duration-700"></div>
+                    <span class="material-symbols-outlined text-3xl md:text-4xl mb-4 md:mb-6 text-white font-thin group-hover:scale-110 transition-transform duration-300 block w-fit">security</span>
+                    <h3 class="text-lg md:text-xl font-bold mb-2 md:mb-3 text-white">Seguridad Robusta</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed group-hover:text-gray-300 transition-colors">Implementación de estándares OWASP y autenticación segura con JWT/OAuth2.</p>
+                </div>
+                
+                <div class="bg-black p-6 md:p-8 group hover:bg-zinc-900 transition-all duration-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-white/10 transition-all duration-700"></div>
+                    <span class="material-symbols-outlined text-3xl md:text-4xl mb-4 md:mb-6 text-white font-thin group-hover:scale-110 transition-transform duration-300 block w-fit">api</span>
+                    <h3 class="text-lg md:text-xl font-bold mb-2 md:mb-3 text-white">Integración API</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed group-hover:text-gray-300 transition-colors">Conexiones fluidas con servicios RESTful y GraphQL para datos en tiempo real.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 bg-black py-12 md:py-16 px-4 md:px-6">
+        <div class="max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-start gap-8 md:gap-12">
+            <div class="flex flex-col gap-4">
+                <div class="flex items-center gap-2 group cursor-pointer">
+                    <span class="material-symbols-outlined text-white group-hover:rotate-12 transition-transform duration-300">terminal</span>
+                    <h2 class="text-xl md:text-2xl font-bold tracking-tighter text-white relative">
+                        serguz.dev
+                    </h2>
+                </div>
+                <p class="text-sm text-gray-500 max-w-xs leading-relaxed">
+                    Desarrollo de software boutique especializado en ecosistema Angular. Construyendo el futuro web.
+                </p>
+            </div>
+            
+            <div class="flex gap-8 md:gap-12">
+                <div class="flex flex-col gap-3 md:gap-4">
+                    <h4 class="text-xs font-bold uppercase text-white tracking-widest">Legal</h4>
+                    <a class="text-sm text-gray-500 hover:text-white transition-colors hover:translate-x-1 inline-block" href="#">Privacidad</a>
+                    <a class="text-sm text-gray-500 hover:text-white transition-colors hover:translate-x-1 inline-block" href="#">Términos</a>
+                </div>
+                <div class="flex flex-col gap-3 md:gap-4">
+                    <h4 class="text-xs font-bold uppercase text-white tracking-widest">Social</h4>
+                    <a class="text-sm text-gray-500 hover:text-white transition-colors hover:translate-x-1 inline-block" href="#" target="_blank">LinkedIn</a>
+                    <a class="text-sm text-gray-500 hover:text-white transition-colors hover:translate-x-1 inline-block" href="#" target="_blank">GitHub</a>
+                    <a class="text-sm text-gray-500 hover:text-white transition-colors hover:translate-x-1 inline-block" href="#" target="_blank">Twitter</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="max-w-[1400px] mx-auto mt-12 md:mt-16 pt-6 md:pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-600 uppercase tracking-wider">
+            <span>© 2026 <span class="lowercase">serguz.dev</span> labs.</span>
+            <span>Perú · Remote</span>
+        </div>
+    </footer>
+
+    <!-- Floating WhatsApp Button -->
+    <a class="fixed bottom-6 md:bottom-8 right-6 md:right-8 z-50 flex items-center gap-3 px-4 md:px-6 py-3 md:py-4 bg-white rounded-full shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:scale-105 hover:shadow-[0_0_40px_rgba(255,255,255,0.4)] transition-all group" href="https://wa.me/51987315685" target="_blank">
+        <span class="font-bold text-black uppercase tracking-wider text-xs md:text-sm hidden sm:block">Chat Directo</span>
+        <div class="size-5 md:size-6 bg-black rounded-full flex items-center justify-center group-hover:rotate-12 transition-transform duration-300">
+            <span class="material-symbols-outlined text-white text-sm">chat</span>
+        </div>
+    </a>
 </body>
 </html>
