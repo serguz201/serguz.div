@@ -69,11 +69,9 @@ module.exports = async (req, res) => {
       description: `Cliente: ${name}\nEmail: ${email}\nTeléfono: ${req.body.phone || 'No proporcionado'}\nTipo: ${type || 'No especificado'}\nMensaje: ${message || 'N/A'}`,
       start: {
         dateTime: startDateTimeStr,
-        timeZone: 'America/Lima',
       },
       end: {
         dateTime: endDateTimeStr,
-        timeZone: 'America/Lima',
       },
       attendees: [
         { email: email }
@@ -104,7 +102,25 @@ module.exports = async (req, res) => {
 
     // Email al cliente
     // Crear objeto Date para mostrar la fecha en el email correctamente
-    const startDate = new Date(`${year}-${month}-${day}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00Z`);
+    // IMPORTANTE: La fecha y hora que vienen del cliente están en zona horaria Lima (UTC-5)
+    // Para convertir a UTC, necesitamos SUMAR 5 horas
+    // Ejemplo: 11:00 AM en Lima = 16:00 UTC (11 + 5)
+    let utcHours = parseInt(hours) + 5;
+    let dateAdjustment = 0;
+    
+    if (utcHours >= 24) {
+      utcHours = utcHours - 24;
+      dateAdjustment = 1;
+    }
+    
+    const startDate = new Date(Date.UTC(
+      parseInt(year), 
+      parseInt(month) - 1, 
+      parseInt(day) + dateAdjustment, 
+      utcHours, 
+      parseInt(minutes), 
+      0
+    ));
     
     const mailOptions = {
       from: process.env.EMAIL_USER,
