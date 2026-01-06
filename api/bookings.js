@@ -53,21 +53,36 @@ module.exports = async (req, res) => {
     }
 
     const [hours, minutes] = time.split(':');
-    const startDateTime = new Date(date);
-    startDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+    
+    // Crear fecha en zona horaria de Lima (UTC-5)
+    // El date viene como YYYY-MM-DD desde el cliente
+    const [year, month, day] = date.split('-');
+    const startDateTime = new Date(year, parseInt(month) - 1, day, parseInt(hours), parseInt(minutes), 0, 0);
     
     const endDateTime = new Date(startDateTime);
     endDateTime.setHours(endDateTime.getHours() + 1);
+
+    // Formatear para Google Calendar en zona horaria Lima sin usar toISOString()
+    // Google Calendar maneja correctamente el timeZone cuando se envía en ISO format
+    const formatDateTimeForCalendar = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+      return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+    };
 
     const event = {
       summary: `Consulta: ${name} - ${type || 'General'}`,
       description: `Cliente: ${name}\nEmail: ${email}\nTeléfono: ${req.body.phone || 'No proporcionado'}\nTipo: ${type || 'No especificado'}\nMensaje: ${message || 'N/A'}`,
       start: {
-        dateTime: startDateTime.toISOString(),
+        dateTime: formatDateTimeForCalendar(startDateTime),
         timeZone: 'America/Lima',
       },
       end: {
-        dateTime: endDateTime.toISOString(),
+        dateTime: formatDateTimeForCalendar(endDateTime),
         timeZone: 'America/Lima',
       },
       attendees: [
